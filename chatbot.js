@@ -16,6 +16,7 @@ const SEND_COOLDOWN_MS = 5000; // 5s delay between messages
 
 let questionCount = 0;
 let lastSentAt = 0;
+let isWaiting = false;
 
 function buildSystemPrompt() {
   const c = CONFIG;
@@ -113,17 +114,15 @@ async function handleSend() {
   const input = document.getElementById("chat-input");
   const btn = document.getElementById("chat-send");
   const text = input.value.trim();
-  if (!text) return;
+  if (!text || isWaiting) return;
 
-  // Limit: max 5 questions per session
+  // Hard block: limit reached
   if (questionCount >= MAX_QUESTIONS) {
-    appendMessage("model", "You've reached the 5-question limit for this session. Please refresh the page to start a new conversation.");
-    input.disabled = true;
-    btn.disabled = true;
+    lockInput(input, btn);
     return;
   }
 
-  // Cooldown: prevent spam
+  // Cooldown check
   const now = Date.now();
   const elapsed = now - lastSentAt;
   if (elapsed < SEND_COOLDOWN_MS) {
@@ -132,6 +131,8 @@ async function handleSend() {
     return;
   }
 
+  // Lock while waiting for reply
+  isWaiting = true;
   lastSentAt = now;
   questionCount++;
 
@@ -139,7 +140,6 @@ async function handleSend() {
   btn.disabled = true;
   appendMessage("user", text);
   saveToSupabase("user", text);
-
   chatHistory.push({ role: "user", parts: [{ text }] });
 
   appendMessage("model", "…");
@@ -153,17 +153,22 @@ async function handleSend() {
   } catch {
     thinking.textContent = "Sorry, I'm unavailable right now. Please try again later.";
   } finally {
-    // Show questions remaining if not yet at limit
-    if (questionCount < MAX_QUESTIONS) {
+    isWaiting = false;
+    if (questionCount >= MAX_QUESTIONS) {
+      lockInput(input, btn);
+    } else {
       btn.disabled = false;
       input.focus();
       input.placeholder = `Ask a question… (${MAX_QUESTIONS - questionCount} left)`;
-    } else {
-      btn.disabled = true;
-      input.disabled = true;
-      input.placeholder = "Question limit reached.";
     }
   }
+}
+
+function lockInput(input, btn) {
+  btn.disabled = true;
+  input.disabled = true;
+  input.placeholder = "Question limit reached. Refresh to start over.";
+  appendMessage("model", "You've reached the 5-question limit for this session. Please refresh the page to start a new conversation.");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
