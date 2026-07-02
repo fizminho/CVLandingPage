@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Loading...</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand" id="nav-brand"></span>
+  <ul class="nav-links" id="nav-links"></ul>
+  <button class="nav-download" onclick="downloadCV()">⬇ Download CV</button>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <h1 id="hero-name"></h1>
+  <p class="tagline" id="hero-tagline"></p>
+  <p class="location" id="hero-location"></p>
+  <div class="contact-links" id="hero-contacts"></div>
+</header>
+
+<!-- DYNAMIC SECTIONS -->
+<main id="main"></main>
+
+<!-- CHATBOT -->
+<button class="chat-toggle" id="chat-toggle" title="Ask about Hafiz">💬</button>
+<div class="chat-widget" id="chat-widget">
+  <div class="chat-header">
+    <div class="chat-header-title">
+      <span class="chat-status"></span>
+      <span>Ask about Hafiz</span>
+    </div>
+    <button class="chat-close" id="chat-close">✕</button>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="chat-msg chat-msg--model">Hi! Ask me anything about Hafiz's experience, skills, or projects. 👋</div>
+  </div>
+  <div class="chat-input-row">
+    <input id="chat-input" type="text" placeholder="Ask a question…" autocomplete="off" />
+    <button id="chat-send">Send</button>
+  </div>
+</div>
+
+<script>
+// ── Section Renderers ──────────────────────────────────────────────────────────
+
+const RENDERERS = {
+  about() {
+    return `<section id="about">
+      <div class="section-title">About</div>
+      <p class="about-text">${CONFIG.about}</p>
+    </section>`;
+  },
+
+  erp() {
+    const badges = CONFIG.erpExperience.map(e => `
+      <div class="erp-badge">${e.system}<span>${e.duration}</span></div>`).join("");
+    return `<section id="erp">
+      <div class="section-title">ERP Experience</div>
+      <div class="erp-list">${badges}</div>
+    </section>`;
+  },
+
+  experience() {
+    const cards = CONFIG.experience.map(e => `
+      <div class="exp-card">
+        <div class="exp-header">
+          <span class="exp-title">${e.title}</span>
+          <span class="exp-period">${e.period}</span>
+        </div>
+        <div class="exp-company">${e.company}</div>
+        <ul class="exp-points">${e.points.map(p => `<li>${p}</li>`).join("")}</ul>
+        <div class="exp-skills">${e.skills.map(s => `<span class="skill-tag">${s}</span>`).join("")}</div>
+      </div>`).join("");
+    return `<section id="experience">
+      <div class="section-title">Work Experience</div>
+      ${cards}
+    </section>`;
+  },
+
+  projects() {
+    if (!CONFIG.projects?.length) return "";
+    const cards = CONFIG.projects.map(p => `
+      <div class="project-card">
+        <div class="project-title">${p.title}</div>
+        <div class="project-desc">${p.description}</div>
+        <div class="exp-skills">${p.tech.map(t => `<span class="skill-tag">${t}</span>`).join("")}</div>
+        ${p.link ? `<a class="project-link" href="${p.link}" target="_blank" rel="noopener">View Project →</a>` : ""}
+      </div>`).join("");
+    return `<section id="projects">
+      <div class="section-title">Projects</div>
+      <div class="projects-grid">${cards}</div>
+    </section>`;
+  },
+
+  skills() {
+    const items = CONFIG.skills.map(s => `
+      <div class="skill-item">${s.name}<small>since ${s.since}</small></div>`).join("");
+    return `<section id="skills">
+      <div class="section-title">Skills</div>
+      <div class="skills-grid">${items}</div>
+    </section>`;
+  },
+
+  education() {
+    const cards = CONFIG.education.map(e => `
+      <div class="edu-card">
+        <div class="edu-degree">${e.degree}</div>
+        <div class="edu-institution">${e.institution}</div>
+        <div class="edu-meta">${e.grade} &nbsp;|&nbsp; ${e.period}</div>
+        ${e.activities?.length ? `<ul class="edu-activities">${e.activities.map(a => `<li>${a}</li>`).join("")}</ul>` : ""}
+      </div>`).join("");
+    return `<section id="education">
+      <div class="section-title">Education</div>
+      ${cards}
+    </section>`;
+  },
+
+  contact() {
+    const c = CONFIG.contact;
+    return `<section id="contact">
+      <div class="section-title">Contact</div>
+      <div class="contact-grid">
+        <a class="contact-item" href="mailto:${c.email}">${c.email}</a>
+        <a class="contact-item" href="tel:${c.phone}">${c.phone}</a>
+        <a class="contact-item" href="${c.linkedin}" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </section>`;
+  },
+};
+
+// ── Bootstrap ──────────────────────────────────────────────────────────────────
+
+(function init() {
+  document.getElementById("page-title").textContent = CONFIG.name;
+  document.getElementById("nav-brand").textContent = CONFIG.name.split(" ").slice(0, 2).join(" ");
+  document.getElementById("hero-name").textContent = CONFIG.name;
+  document.getElementById("hero-tagline").textContent = CONFIG.tagline;
+  document.getElementById("hero-location").textContent = "📍 " + CONFIG.location;
+
+  // Hero contact links
+  const contacts = document.getElementById("hero-contacts");
+  contacts.innerHTML = `
+    <a href="mailto:${CONFIG.contact.email}">${CONFIG.contact.email}</a>
+    <a href="tel:${CONFIG.contact.phone}">${CONFIG.contact.phone}</a>
+    <a href="${CONFIG.contact.linkedin}" target="_blank" rel="noopener">LinkedIn</a>`;
+
+  // Nav links from sections
+  const navLinks = document.getElementById("nav-links");
+  CONFIG.sections.forEach(s => {
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="#${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</a>`;
+    navLinks.appendChild(li);
+  });
+
+  // Render sections
+  const main = document.getElementById("main");
+  CONFIG.sections.forEach(s => {
+    if (RENDERERS[s]) main.insertAdjacentHTML("beforeend", RENDERERS[s]());
+  });
+})();
+</script>
+
+<script src="chatbot.js"></script>
+<script src="cv-download.js"></script>
+</body>
+</html>
