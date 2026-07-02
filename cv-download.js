@@ -53,11 +53,33 @@ async function downloadCV() {
   line(c.tagline, 11, "normal", [80, 80, 80]);
   line(`${c.location}  |  ${c.contact.phone}  |  ${c.contact.email}`, 10);
   line(c.contact.linkedin, 10, "normal", [80, 80, 80]);
+  if (c.preferredposition) line(`Preferred Positions: ${c.preferredposition}`, 10, "italic", [80, 80, 80]);
   gap();
 
   // --- SUMMARY ---
   sectionHeading("Summary");
   multiLine(c.about);
+
+  // --- CORE COMPETENCIES ---
+  if (c.competencies?.length) {
+    sectionHeading("Core Competencies");
+    const cols = 3;
+    const colW = W / cols;
+    const rows = Math.ceil(c.competencies.length / cols);
+    for (let r = 0; r < rows; r++) {
+      checkPage();
+      for (let col = 0; col < cols; col++) {
+        const item = c.competencies[r * cols + col];
+        if (item) {
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(30, 30, 30);
+          doc.text(`- ${item.name}`, L + col * colW, y);
+        }
+      }
+      y += LINE_H;
+    }
+  }
 
   // --- ERP EXPERIENCE ---
   sectionHeading("ERP Experience");
@@ -75,9 +97,21 @@ async function downloadCV() {
   });
 
   // --- SKILLS ---
-  sectionHeading("Skills");
+  sectionHeading("Technical Skills");
   const skillText = c.skills.map((s) => `${s.name} (since ${s.since})`).join("   |   ");
   multiLine(skillText);
+
+  if (c.previousskills?.length) {
+    gap(2);
+    line("Previous Skills:", 10, "italic", [80, 80, 80]);
+    multiLine(c.previousskills.map((s) => s.name).join("   |   "), 10);
+  }
+
+  if (c.languages?.length) {
+    gap(2);
+    line("Languages:", 10, "italic", [80, 80, 80]);
+    multiLine(c.languages.map((l) => `${l.name} — ${l.proficiency}`).join("   |   "), 10);
+  }
 
   // --- EDUCATION ---
   sectionHeading("Education");
@@ -101,6 +135,14 @@ async function downloadCV() {
       line(`Tech: ${p.tech.join(", ")}`, 10, "italic", [100, 100, 100]);
       if (p.link) line(p.link, 10, "normal", [80, 80, 80]);
       gap(4);
+    });
+  }
+
+  // --- REFERENCES ---
+  if (c.references?.length) {
+    sectionHeading("References");
+    c.references.forEach((r) => {
+      line(`${r.name}  |  ${r.company}  |  ${r.phone}`, 10);
     });
   }
 
