@@ -66,6 +66,7 @@ const RENDERERS = {
     return `<section id="about">
       <div class="section-title">About</div>
       <p class="about-text">${CONFIG.about}</p>
+      ${CONFIG.preferredposition ? `<p style="margin-top:0.75rem;font-size:0.875rem;"><strong>Preferred Positions:</strong> <span style="color:var(--muted)">${CONFIG.preferredposition}</span></p>` : ""}
     </section>`;
   },
 
@@ -144,8 +145,62 @@ const RENDERERS = {
       <div class="contact-grid">
         <a class="contact-item" href="mailto:${c.email}">${c.email}</a>
         <a class="contact-item" href="tel:${c.phone}">${c.phone}</a>
-        <a class="contact-item" href="${c.linkedin}" target="_blank" rel="noopener">LinkedIn</a>
+        ${c.linkedin ? `<a class="contact-item" href="${c.linkedin}" target="_blank" rel="noopener">LinkedIn</a>` : ""}
       </div>
+    </section>`;
+  },
+
+  previousskills() {
+    if (!CONFIG.previousskills?.length) return "";
+    const items = CONFIG.previousskills.map(s => `
+      <div class="skill-item" style="opacity:0.65">${s.name}<small>since ${s.since}</small></div>`).join("");
+    return `<section id="previousskills">
+      <div class="section-title">Previous Skills</div>
+      <div class="skills-grid">${items}</div>
+    </section>`;
+  },
+
+  languages() {
+    if (!CONFIG.languages?.length) return "";
+    const items = CONFIG.languages.map(l => `
+      <div class="skill-item">${l.name}<small>${l.proficiency}</small></div>`).join("");
+    return `<section id="languages">
+      <div class="section-title">Languages</div>
+      <div class="skills-grid">${items}</div>
+    </section>`;
+  },
+
+  references() {
+    if (!CONFIG.references?.length) return "";
+    const cards = CONFIG.references.map(r => `
+      <div class="exp-card">
+        <div class="exp-title">${r.name}</div>
+        <div class="exp-company">${r.company}</div>
+        <div class="contact-grid" style="margin-top:0.5rem">
+          <a class="contact-item" href="tel:${r.phone}">${r.phone}</a>
+          ${r.email ? `<a class="contact-item" href="mailto:${r.email}">${r.email}</a>` : ""}
+        </div>
+      </div>`).join("");
+    return `<section id="references">
+      <div class="section-title">References</div>
+      ${cards}
+    </section>`;
+  },
+
+  references() {
+    if (!CONFIG.references?.length) return "";
+    const cards = CONFIG.references.map(r => `
+      <div class="exp-card">
+        <div class="exp-title">${r.name}</div>
+        <div class="exp-company">${r.company}</div>
+        <div class="contact-grid" style="margin-top:0.5rem">
+          <a class="contact-item" href="tel:${r.phone}">${r.phone}</a>
+          ${r.email ? `<a class="contact-item" href="mailto:${r.email}">${r.email}</a>` : ""}
+        </div>
+      </div>`).join("");
+    return `<section id="references">
+      <div class="section-title">References</div>
+      ${cards}
     </section>`;
   },
 };

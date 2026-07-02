@@ -2,6 +2,7 @@ const CONFIG = {
   name: "Muhammad Hafiz Bin Zulkiflee Amin",
   tagline: "Senior Software Developer",
   location: "Rawang, Selangor",
+  preferredposition: "BE Developer, Lead Developer, Technical Consultant, Solution Architect, Business Analyst",
   about:
     "Highly skilled and experienced Software Engineer specializing in customizing Enterprise Resource Planning (ERP) systems. Proficient in .NET development, ERP customization, and integration. Strong expertise in ASP.NET, C#, SQL Server, and web technologies. Demonstrated success in delivering tailored solutions to meet client requirements and optimizing ERP functionalities. Experienced in working with popular ERP systems such as IFCA Property ERP and Microsoft Dynamics 365. Proven ability to develop web services, Windows services, and Web API for seamless system integration and data exchange. Committed to delivering high-quality software solutions while adhering to best practices and industry standards. Excellent problem-solving skills and a strong aptitude for technical analysis. A dedicated professional with a Bachelor's Degree in Information Technology and a passion for staying updated with the latest technologies and trends in the field. Ready to leverage expertise and contribute to the success of a dynamic organization as a .NET and ERP Developer.",
 
@@ -64,14 +65,27 @@ const CONFIG = {
   ],
 
   skills: [
+    { name: "Microservices", since: "2023" },
+    { name: "Redis", since: "2023" },
+    { name: "PGSQL", since: "2023" },
+    { name: "Kafka", since: "2023" },
+    { name: "AWS Cloud Services [EC2,S3,EKS,RDS,MSK]", since: "2023" },
     { name: "C#", since: "2019" },
     { name: "HTML", since: "2019" },
     { name: "MS SQL", since: "2019" },
     { name: "JavaScript", since: "2019" },
+  ],
+
+  previousskills: [
     { name: "ASP.NET", since: "2019" },
     { name: "SSRS Reporting", since: "2019" },
     { name: "X++", since: "2019" },
     { name: "IONIC Framework", since: "2019" },
+  ],
+
+  languages: [
+    { name: "English", proficiency: "Professional Working Proficiency" },
+    { name: "Malay", proficiency: "Native or Bilingual Proficiency" },
   ],
 
   education: [
@@ -91,11 +105,18 @@ const CONFIG = {
   // Add new projects here freely
   projects: [
     {
-      title: "BayarLahh",
+      title: "BayarLah",
       description:
-        "A personal finance web app to help users manage and track their payments and expenses easily.",
+        "A personal finance web app to help users manage and track their split payments and expenses easily.",
       tech: ["Next.js", "Vercel"],
       link: "https://bayarlahh.vercel.app/",
+    },
+    {
+      title: "SewaLah",
+      description:
+        "A rental management system to ease the rental process targeting small property owners with rent model rent by room/property.",
+      tech: ["Next.js", "C#", "AWS Cloud Services", "Netlify"],
+      link: "",
     },
     {
       title: "IFCA ERP Customisations",
@@ -123,19 +144,21 @@ const CONFIG = {
   erpExperience: [
     { system: "IFCA Property ERP", duration: "4 Years" },
     { system: "Microsoft Dynamics 365", duration: "1 Year" },
-    { system: "Dialog Group ERP", duration: "2 Years" },
   ],
 
   references: [
     {
-      name: "Azrul Amin bin Ibrahim",
-      company: "9 Dots Consulting Sdn Bhd",
-      phone: "60132222653",
-      email: "azrul.amin@9dots.com",
+      name: "Azharul",
+      company: "IFCA MSC BHD",
+      phone: "016-921 1608",
+    },
+    {
+      name: "Chuah Tse Leong",
+      company: "Dialog Berhad",
+      phone: "012-977 8986",
     },
   ],
 
   // Controls which sections appear and their order on the page
-  // Available: "about", "erp", "experience", "projects", "skills", "education", "contact"
-  sections: ["about", "erp", "experience", "projects", "skills", "education", "contact"],
+  sections: ["about", "erp", "experience", "projects", "skills", "previousskills", "languages", "education", "references", "contact"],
 };
