@@ -138,10 +138,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("chat-input").addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
   });
+  const widget = document.getElementById("chat-widget");
+  const label = document.getElementById("chat-label");
   document.getElementById("chat-toggle").addEventListener("click", () => {
-    document.getElementById("chat-widget").classList.toggle("chat-widget--open");
+    widget.classList.toggle("chat-widget--open");
+    label.classList.toggle("chat-label--hidden", widget.classList.contains("chat-widget--open"));
+  });
+  label.addEventListener("click", () => {
+    widget.classList.add("chat-widget--open");
+    label.classList.add("chat-label--hidden");
   });
   document.getElementById("chat-close").addEventListener("click", () => {
-    document.getElementById("chat-widget").classList.remove("chat-widget--open");
+    widget.classList.remove("chat-widget--open");
+    label.classList.remove("chat-label--hidden");
   });
 });

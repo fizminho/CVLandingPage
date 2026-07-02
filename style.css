@@ -377,11 +377,34 @@ footer {
 }
 
 /* ── CHATBOT WIDGET ──────────────────────────────────────────────────────── */
-.chat-toggle {
+.chat-launcher {
   position: fixed;
   bottom: 1.75rem;
   right: 1.75rem;
   z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-direction: row-reverse;
+}
+
+.chat-label {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(26,86,219,0.3);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+  font-family: var(--font);
+}
+.chat-label:hover { opacity: 0.9; transform: translateY(-1px); }
+.chat-label--hidden { display: none; }
+
+.chat-toggle {
   background: var(--accent);
   color: #fff;
   border: none;
@@ -392,6 +415,7 @@ footer {
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(26,86,219,0.35);
   transition: transform .2s, box-shadow .2s;
+  flex-shrink: 0;
 }
 .chat-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(26,86,219,0.45); }
 
