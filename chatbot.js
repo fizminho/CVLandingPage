@@ -11,6 +11,11 @@ const MODELS = [
 
 const RETRIES_PER_MODEL = 3;
 const SESSION_ID = crypto.randomUUID();
+const MAX_QUESTIONS = 5;
+const SEND_COOLDOWN_MS = 5000; // 5s delay between messages
+
+let questionCount = 0;
+let lastSentAt = 0;
 
 function buildSystemPrompt() {
   const c = CONFIG;
@@ -110,6 +115,26 @@ async function handleSend() {
   const text = input.value.trim();
   if (!text) return;
 
+  // Limit: max 5 questions per session
+  if (questionCount >= MAX_QUESTIONS) {
+    appendMessage("model", "You've reached the 5-question limit for this session. Please refresh the page to start a new conversation.");
+    input.disabled = true;
+    btn.disabled = true;
+    return;
+  }
+
+  // Cooldown: prevent spam
+  const now = Date.now();
+  const elapsed = now - lastSentAt;
+  if (elapsed < SEND_COOLDOWN_MS) {
+    const wait = Math.ceil((SEND_COOLDOWN_MS - elapsed) / 1000);
+    appendMessage("model", `Please wait ${wait} second${wait > 1 ? "s" : ""} before sending another message.`);
+    return;
+  }
+
+  lastSentAt = now;
+  questionCount++;
+
   input.value = "";
   btn.disabled = true;
   appendMessage("user", text);
@@ -128,8 +153,16 @@ async function handleSend() {
   } catch {
     thinking.textContent = "Sorry, I'm unavailable right now. Please try again later.";
   } finally {
-    btn.disabled = false;
-    input.focus();
+    // Show questions remaining if not yet at limit
+    if (questionCount < MAX_QUESTIONS) {
+      btn.disabled = false;
+      input.focus();
+      input.placeholder = `Ask a question… (${MAX_QUESTIONS - questionCount} left)`;
+    } else {
+      btn.disabled = true;
+      input.disabled = true;
+      input.placeholder = "Question limit reached.";
+    }
   }
 }
 
