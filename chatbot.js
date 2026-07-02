@@ -144,15 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function openChat() {
     widget.classList.add("chat-widget--open");
     label.classList.add("chat-label--hidden");
+    document.getElementById("chat-input").focus();
   }
   function closeChat() {
     widget.classList.remove("chat-widget--open");
     label.classList.remove("chat-label--hidden");
   }
 
-  document.getElementById("chat-toggle").addEventListener("click", () => {
-    widget.classList.contains("chat-widget--open") ? closeChat() : openChat();
-  });
   label.addEventListener("click", openChat);
   document.getElementById("chat-close").addEventListener("click", closeChat);
 
