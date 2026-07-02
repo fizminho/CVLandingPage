@@ -3,7 +3,7 @@ const CONFIG = {
   tagline: "Software Engineer",
   location: "Rawang, Selangor",
   about:
-    "Experienced Software Engineer with 4 years of customising Enterprise Resources Planning System (ERP). Skilled with MS-SQL scripting with stored procedures, views and functions to develop SSRS Reports and backend logics. Able to develop and meet client requirements by customising company's products using C#, JavaScript, HTML, X++, ASP.Net. Have a very strong interest in various ERP systems.",
+    "Highly skilled and experienced Software Engineer specializing in customizing Enterprise Resource Planning (ERP) systems. Proficient in .NET development, ERP customization, and integration. Strong expertise in ASP.NET, C#, SQL Server, and web technologies. Demonstrated success in delivering tailored solutions to meet client requirements and optimizing ERP functionalities. Experienced in working with popular ERP systems such as IFCA Property ERP and Microsoft Dynamics 365. Proven ability to develop web services, Windows services, and Web API for seamless system integration and data exchange. Committed to delivering high-quality software solutions while adhering to best practices and industry standards. Excellent problem-solving skills and a strong aptitude for technical analysis. A dedicated professional with a Bachelor's Degree in Information Technology and a passion for staying updated with the latest technologies and trends in the field. Ready to leverage expertise and contribute to the success of a dynamic organization as a .NET and ERP Developer.",
 
   contact: {
     email: "96muhdhafiz@gmail.com",
