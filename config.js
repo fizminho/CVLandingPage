@@ -1,6 +1,6 @@
 const CONFIG = {
   name: "Muhammad Hafiz Bin Zulkiflee Amin",
-  tagline: "Software Engineer",
+  tagline: "Senior Software Developer",
   location: "Rawang, Selangor",
   about:
     "Highly skilled and experienced Software Engineer specializing in customizing Enterprise Resource Planning (ERP) systems. Proficient in .NET development, ERP customization, and integration. Strong expertise in ASP.NET, C#, SQL Server, and web technologies. Demonstrated success in delivering tailored solutions to meet client requirements and optimizing ERP functionalities. Experienced in working with popular ERP systems such as IFCA Property ERP and Microsoft Dynamics 365. Proven ability to develop web services, Windows services, and Web API for seamless system integration and data exchange. Committed to delivering high-quality software solutions while adhering to best practices and industry standards. Excellent problem-solving skills and a strong aptitude for technical analysis. A dedicated professional with a Bachelor's Degree in Information Technology and a passion for staying updated with the latest technologies and trends in the field. Ready to leverage expertise and contribute to the success of a dynamic organization as a .NET and ERP Developer.",
@@ -13,28 +13,39 @@ const CONFIG = {
 
   experience: [
     {
+      title: "Senior Software Developer",
+      company: "Dialog Group Berhad",
+      period: "Dec 2023 - Present",
+      points: [],
+      skills: [],
+    },
+    {
       title: "Software Engineer",
       company: "IFCA MSC Bhd",
-      period: "Dec 2019 - Present",
+      period: "Dec 2019 - Dec 2023",
       points: [
-        "Provides solutions, customisation and improvement based on customer requirements.",
-        "Experienced in handling IFCA System modules: Procurement Management, Rental and Residential, Cash Management, General Ledger.",
-        "Provides guidance to new joiners on how to customise IFCA systems.",
-        "Massages and provides meaningful data to clients in reports using SSRS Report.",
-        "Develops Import/Export functions for clients.",
-        "Builds automation based on client's existing systems.",
+        "Offering solutions, customization, and enhancements based on customer needs.",
+        "Proficient in managing multiple modules of the IFCA System, including Procurement Management, Rental and Residential, Cash Management, and General Ledger.",
+        "Providing support and training to new team members on customizing IFCA systems and related technologies.",
+        "Generating informative reports for clients using SSRS Report.",
+        "Implementing import/export functions for clients.",
+        "Developing automation based on client's existing systems.",
+        "Developing API integration between IFCA and HIMS (KPKT) to reduce workload for E-SPA purpose.",
+        "Developing API interface between IFCA and Microkredit to allow Double Entry data from receipts and billings to flow into IFCA.",
+        "Developing API interface between IFCA and PKNS for the whole General Ledger process, Double Entry from IFCA flows to GRP system.",
+        "Experienced in creating EFT Files for UOB, AmBank and Maybank.",
       ],
-      skills: ["MSSQL", "HTML", "JavaScript", "C#", "ASP.Net"],
+      skills: ["MSSQL", "HTML", "JavaScript", "C#", "ASP.Net", "Web API"],
     },
     {
       title: "Technical Consultant",
       company: "9 Dots Consulting",
       period: "Jan 2019 - Dec 2019",
       points: [
-        "Customizing Microsoft Dynamics 365 based on client requirements.",
-        "Maintaining Microsoft Dynamics 365 applications.",
-        "Assisted in developing Ionic App with integration between D365 and Ionic App.",
-        "Provides training and consultation to customers on Microsoft D365 basics.",
+        "Customizing Microsoft Dynamics 365 to meet client needs.",
+        "Managing and maintaining Microsoft Dynamics 365 applications.",
+        "Supporting the development of an Ionic app that integrates with Dynamics 365.",
+        "Offering training and consulting services on Microsoft Dynamics 365 to customers.",
       ],
       skills: ["X++", "MSSQL", "C#", "IONIC Framework", "SSRS"],
     },
@@ -80,6 +91,13 @@ const CONFIG = {
   // Add new projects here freely
   projects: [
     {
+      title: "BayarLahh",
+      description:
+        "A personal finance web app to help users manage and track their payments and expenses easily.",
+      tech: ["Next.js", "Vercel"],
+      link: "https://bayarlahh.vercel.app/",
+    },
+    {
       title: "IFCA ERP Customisations",
       description:
         "Various customisations and automation solutions for IFCA Property ERP clients covering Procurement, Cash Management, and General Ledger modules.",
@@ -105,6 +123,7 @@ const CONFIG = {
   erpExperience: [
     { system: "IFCA Property ERP", duration: "4 Years" },
     { system: "Microsoft Dynamics 365", duration: "1 Year" },
+    { system: "Dialog Group ERP", duration: "2 Years" },
   ],
 
   references: [
