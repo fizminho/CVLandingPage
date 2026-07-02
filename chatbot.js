@@ -114,7 +114,9 @@ async function handleSend() {
   const input = document.getElementById("chat-input");
   const btn = document.getElementById("chat-send");
   const text = input.value.trim();
-  if (!text || isWaiting) return;
+
+  // Block all entry points — disabled input, waiting for reply, or empty text
+  if (input.disabled || isWaiting || !text) return;
 
   // Hard block: limit reached
   if (questionCount >= MAX_QUESTIONS) {
@@ -135,9 +137,10 @@ async function handleSend() {
   isWaiting = true;
   lastSentAt = now;
   questionCount++;
-
-  input.value = "";
+  input.disabled = true;
   btn.disabled = true;
+  input.value = "";
+
   appendMessage("user", text);
   saveToSupabase("user", text);
   chatHistory.push({ role: "user", parts: [{ text }] });
@@ -157,17 +160,22 @@ async function handleSend() {
     if (questionCount >= MAX_QUESTIONS) {
       lockInput(input, btn);
     } else {
+      input.disabled = false;
       btn.disabled = false;
-      input.focus();
       input.placeholder = `Ask a question… (${MAX_QUESTIONS - questionCount} left)`;
+      input.focus();
     }
   }
 }
 
 function lockInput(input, btn) {
-  btn.disabled = true;
   input.disabled = true;
+  btn.disabled = true;
   input.placeholder = "Question limit reached. Refresh to start over.";
+  // Only show the message once
+  const msgs = document.querySelectorAll(".chat-msg--model");
+  const last = msgs[msgs.length - 1];
+  if (last && last.textContent.includes("limit")) return;
   appendMessage("model", "You've reached the 5-question limit for this session. Please refresh the page to start a new conversation.");
 }
 
