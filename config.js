@@ -116,7 +116,7 @@ const CONFIG = {
       description:
         "A personal finance web app to help users manage and track their split payments and expenses easily.",
       tech: ["Next.js", "Vercel"],
-      link: "https://bayarlahh.vercel.app/",
+      link: "https://bayarlah.binalah.com/",
     },
     {
       title: "SewaLah",
