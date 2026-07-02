@@ -21,6 +21,7 @@
 
 <!-- HERO -->
 <header class="hero">
+  <div class="hero-avatar">👨‍💻</div>
   <h1 id="hero-name"></h1>
   <p class="tagline" id="hero-tagline"></p>
   <p class="location" id="hero-location"></p>
@@ -29,6 +30,10 @@
 
 <!-- DYNAMIC SECTIONS -->
 <main id="main"></main>
+
+<footer>
+  <span id="footer-name"></span> — Built with GitHub Pages
+</footer>
 
 <!-- CHATBOT -->
 <button class="chat-toggle" id="chat-toggle" title="Ask about Hafiz">💬</button>
@@ -88,9 +93,13 @@ const RENDERERS = {
 
   projects() {
     if (!CONFIG.projects?.length) return "";
-    const cards = CONFIG.projects.map(p => `
+    const icons = ["🛠️","📱","🏨","⚙️","📊","🔗"];
+    const cards = CONFIG.projects.map((p, i) => `
       <div class="project-card">
-        <div class="project-title">${p.title}</div>
+        <div class="project-card-top">
+          <div class="project-icon">${icons[i % icons.length]}</div>
+          <div class="project-title">${p.title}</div>
+        </div>
         <div class="project-desc">${p.description}</div>
         <div class="exp-skills">${p.tech.map(t => `<span class="skill-tag">${t}</span>`).join("")}</div>
         ${p.link ? `<a class="project-link" href="${p.link}" target="_blank" rel="noopener">View Project →</a>` : ""}
@@ -141,6 +150,7 @@ const RENDERERS = {
 
 (function init() {
   document.getElementById("page-title").textContent = CONFIG.name;
+  document.getElementById("footer-name").textContent = CONFIG.name;
   document.getElementById("nav-brand").textContent = CONFIG.name.split(" ").slice(0, 2).join(" ");
   document.getElementById("hero-name").textContent = CONFIG.name;
   document.getElementById("hero-tagline").textContent = CONFIG.tagline;
