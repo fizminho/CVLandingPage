@@ -404,10 +404,11 @@ footer {
   box-shadow: 0 4px 16px rgba(26,86,219,0.3);
   white-space: nowrap;
   cursor: pointer;
-  transition: opacity .2s, transform .2s;
+  border: none;
   font-family: var(--font);
+  transition: opacity .2s, transform .2s;
 }
-.chat-label:hover { opacity: 0.9; transform: translateY(-1px); }
+.chat-label:hover { opacity: 0.88; transform: translateY(-1px); }
 .chat-label--hidden { display: none; }
 
 .chat-toggle {
@@ -556,7 +557,8 @@ footer {
   nav { padding: 0 1rem; }
   .nav-links { display: none; }
   .hero { padding: 3.5rem 1rem 2.5rem; }
-  .chat-widget { width: calc(100vw - 2rem); right: 1rem; }
+  .chat-launcher { bottom: 1rem; right: 1rem; }
+  .chat-widget { width: calc(100vw - 2rem); }
   .projects-grid { grid-template-columns: 1fr; }
   main { padding: 0 1rem 5rem; }
 }
