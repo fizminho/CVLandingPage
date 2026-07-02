@@ -17,8 +17,15 @@ const CONFIG = {
       title: "Senior Software Developer",
       company: "Dialog Group Berhad",
       period: "Dec 2023 - Present",
-      points: [],
-      skills: [],
+      points: [
+        "Maintained and enhanced a large-scale Welfare Management System (WMS), delivering new features and ensuring high system availability.",
+        "Designed and optimized a message-driven transaction architecture using message brokers, significantly improving the scalability and reliability of e-wallet style payment processing.",
+        "Engineered high-performance batch processing solutions capable of handling nationwide, large-volume scheduled workloads.",
+        "Successfully delivered large-scale government assistance programs: SARA 2025 supporting approximately 5 million recipients, and SARA Untuk Semua 2026 scaling the platform to approximately 22 million recipients.",
+        "Collaborated with DevOps teams to monitor and optimize AWS cloud infrastructure, improving application performance, scalability, and operational reliability.",
+        "Optimized application and database performance through architecture improvements, asynchronous processing, and efficient data handling in C#, PostgreSQL, and AWS environments.",
+      ],
+      skills: ["C#", "Redis", "MSK", "RDS", "PGSQL", "Lens"],
     },
     {
       title: "Software Engineer",
@@ -141,6 +148,21 @@ const CONFIG = {
     },
   ],
 
+  competencies: [
+    { name: "System Design & Architecture" },
+    { name: "API Integration & Web Services" },
+    { name: "ERP Customisation" },
+    { name: "Technical Consulting" },
+    { name: "Business Requirements Analysis" },
+    { name: "Stakeholder Communication" },
+    { name: "Database Design & Optimisation" },
+    { name: "Batch Processing & Automation" },
+    { name: "Cloud Infrastructure (AWS)" },
+    { name: "Message-Driven Architecture" },
+    { name: "Technical Documentation" },
+    { name: "Team Mentoring & Training" },
+  ],
+
   erpExperience: [
     { system: "IFCA Property ERP", duration: "4 Years" },
     { system: "Microsoft Dynamics 365", duration: "1 Year" },
@@ -160,5 +182,5 @@ const CONFIG = {
   ],
 
   // Controls which sections appear and their order on the page
-  sections: ["about", "erp", "experience", "projects", "skills", "previousskills", "languages", "education", "references", "contact"],
+  sections: ["about", "erp", "experience", "projects", "competencies", "skills", "previousskills", "languages", "education", "references", "contact"],
 };

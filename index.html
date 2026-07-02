@@ -63,10 +63,13 @@
 
 const RENDERERS = {
   about() {
+    const positions = CONFIG.preferredposition
+      ? CONFIG.preferredposition.split(",").map(p => `<span class="skill-tag" style="font-size:0.8rem">${p.trim()}</span>`).join("")
+      : "";
     return `<section id="about">
       <div class="section-title">About</div>
       <p class="about-text">${CONFIG.about}</p>
-      ${CONFIG.preferredposition ? `<p style="margin-top:0.75rem;font-size:0.875rem;"><strong>Preferred Positions:</strong> <span style="color:var(--muted)">${CONFIG.preferredposition}</span></p>` : ""}
+      ${positions ? `<div style="margin-top:1rem"><p style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem">Preferred Positions</p><div class="skills-grid">${positions}</div></div>` : ""}
     </section>`;
   },
 
@@ -112,6 +115,18 @@ const RENDERERS = {
     return `<section id="projects">
       <div class="section-title">Projects</div>
       <div class="projects-grid">${cards}</div>
+    </section>`;
+  },
+
+  competencies() {
+    if (!CONFIG.competencies?.length) return "";
+    const items = CONFIG.competencies.map(c => `
+      <div class="competency-item">
+        <span class="competency-check">✓</span>${c.name}
+      </div>`).join("");
+    return `<section id="competencies">
+      <div class="section-title">Core Competencies</div>
+      <div class="competencies-grid">${items}</div>
     </section>`;
   },
 
@@ -186,23 +201,6 @@ const RENDERERS = {
       ${cards}
     </section>`;
   },
-
-  references() {
-    if (!CONFIG.references?.length) return "";
-    const cards = CONFIG.references.map(r => `
-      <div class="exp-card">
-        <div class="exp-title">${r.name}</div>
-        <div class="exp-company">${r.company}</div>
-        <div class="contact-grid" style="margin-top:0.5rem">
-          <a class="contact-item" href="tel:${r.phone}">${r.phone}</a>
-          ${r.email ? `<a class="contact-item" href="mailto:${r.email}">${r.email}</a>` : ""}
-        </div>
-      </div>`).join("");
-    return `<section id="references">
-      <div class="section-title">References</div>
-      ${cards}
-    </section>`;
-  },
 };
 
 // ── Bootstrap ──────────────────────────────────────────────────────────────────
@@ -220,7 +218,7 @@ const RENDERERS = {
   contacts.innerHTML = `
     <a href="mailto:${CONFIG.contact.email}">${CONFIG.contact.email}</a>
     <a href="tel:${CONFIG.contact.phone}">${CONFIG.contact.phone}</a>
-    <a href="${CONFIG.contact.linkedin}" target="_blank" rel="noopener">LinkedIn</a>`;
+    ${CONFIG.contact.linkedin ? `<a href="${CONFIG.contact.linkedin}" target="_blank" rel="noopener">LinkedIn</a>` : ""}`;
 
   // Nav links from sections
   const navLinks = document.getElementById("nav-links");

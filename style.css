@@ -305,6 +305,34 @@ section { margin-top: 3rem; }
 }
 .project-link:hover { text-decoration: underline; }
 
+/* ── COMPETENCIES ──────────────────────────────────────────────────── */
+.competencies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.65rem;
+}
+.competency-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: border-color .2s, transform .15s;
+}
+.competency-item:hover { border-color: var(--accent2); transform: translateY(-1px); }
+.competency-check {
+  color: var(--accent2);
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
 /* ── SKILLS ──────────────────────────────────────────────────────────────── */
 .skills-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .skill-item {
