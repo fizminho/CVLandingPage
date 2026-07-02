@@ -140,16 +140,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   const widget = document.getElementById("chat-widget");
   const label = document.getElementById("chat-label");
-  document.getElementById("chat-toggle").addEventListener("click", () => {
-    widget.classList.toggle("chat-widget--open");
-    label.classList.toggle("chat-label--hidden", widget.classList.contains("chat-widget--open"));
-  });
-  label.addEventListener("click", () => {
+
+  function openChat() {
     widget.classList.add("chat-widget--open");
     label.classList.add("chat-label--hidden");
-  });
-  document.getElementById("chat-close").addEventListener("click", () => {
+  }
+  function closeChat() {
     widget.classList.remove("chat-widget--open");
     label.classList.remove("chat-label--hidden");
+  }
+
+  document.getElementById("chat-toggle").addEventListener("click", () => {
+    widget.classList.contains("chat-widget--open") ? closeChat() : openChat();
   });
+  label.addEventListener("click", openChat);
+  document.getElementById("chat-close").addEventListener("click", closeChat);
+
+  // Auto pop-up after 2.5s so visitors notice the chatbot
+  setTimeout(openChat, 2500);
 });

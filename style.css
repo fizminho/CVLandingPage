@@ -434,7 +434,12 @@ footer {
   box-shadow: 0 8px 40px rgba(0,0,0,0.14);
   overflow: hidden;
 }
-.chat-widget--open { display: flex; }
+.chat-widget--open { display: flex; animation: chatSlideUp .25s ease; }
+
+@keyframes chatSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .chat-header {
   display: flex;
