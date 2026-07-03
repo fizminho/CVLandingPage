@@ -56,7 +56,7 @@ PROJECTS:
 ${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\n")}
 
 COMPETENCIES:
-${c.competencies.map((c) => c.name).join(", ")}
+${c.competencies.map((comp) => comp.name).join(", ")}
 
 ERP EXPERIENCE:
 ${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\n")}
