@@ -37,17 +37,32 @@ ${c.about}
 WORK EXPERIENCE:
 ${c.experience.map((e) => `${e.title} at ${e.company} (${e.period})\n${e.points.map((p) => `- ${p}`).join("\n")}\nSkills: ${e.skills.join(", ")}`).join("\n\n")}
 
+PREFERRED POSITIONS:
+${c.preferredposition}
+
 SKILLS:
 ${c.skills.map((s) => `${s.name} (since ${s.since})`).join(", ")}
 
+PREVIOUS/OTHER SKILLS:
+${c.previousskills.map((s) => `${s.name} (since ${s.since})`).join(", ")}
+
+LANGUAGES:
+${c.languages.map((l) => `${l.name}: ${l.proficiency}`).join("\n")}
+
 EDUCATION:
-${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})`).join("\n")}
+${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})\nActivities: ${e.activities.join("; ")}`).join("\n")}
 
 PROJECTS:
 ${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\n")}
 
+COMPETENCIES:
+${c.competencies.map((c) => c.name).join(", ")}
+
 ERP EXPERIENCE:
 ${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\n")}
+
+REFERENCES:
+${c.references.map((r) => `${r.name} — ${r.company} (${r.phone})`).join("\n")}
 --- END CV DATA ---`;
 }
 
