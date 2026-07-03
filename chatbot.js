@@ -179,7 +179,7 @@ function lockInput(input, btn) {
   appendMessage("model", "You've reached the 5-question limit for this session. Please refresh the page to start a new conversation.");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function initChat() {
   document.getElementById("chat-send").addEventListener("click", handleSend);
   document.getElementById("chat-input").addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
@@ -202,4 +202,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Auto pop-up after 2.5s so visitors notice the chatbot
   setTimeout(openChat, 2500);
-});
+}
+initChat();
