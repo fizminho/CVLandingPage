@@ -447,16 +447,19 @@ footer {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
-  display: none;
+  display: flex;
   flex-direction: column;
   box-shadow: 0 8px 40px rgba(0,0,0,0.14);
   overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, visibility .25s ease;
 }
-.chat-widget--open { display: flex; animation: chatSlideUp .25s ease; }
-
-@keyframes chatSlideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+.chat-widget--open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .chat-header {

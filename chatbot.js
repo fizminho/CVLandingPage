@@ -213,6 +213,7 @@ function initChat() {
   }
 
   label.addEventListener("click", openChat);
+  label.addEventListener("pointerup", openChat);
   document.getElementById("chat-close").addEventListener("click", closeChat);
 
   // Auto pop-up after 2.5s so visitors notice the chatbot
