@@ -202,18 +202,18 @@ function initChat() {
   const widget = document.getElementById("chat-widget");
   const label = document.getElementById("chat-label");
 
-  function openChat() {
+  function openChat(fromUser) {
     widget.classList.add("chat-widget--open");
     label.classList.add("chat-label--hidden");
-    document.getElementById("chat-input").focus();
+    if (fromUser) document.getElementById("chat-input").focus();
   }
   function closeChat() {
     widget.classList.remove("chat-widget--open");
     label.classList.remove("chat-label--hidden");
   }
 
-  label.addEventListener("click", openChat);
-  label.addEventListener("pointerup", openChat);
+  label.addEventListener("click", () => openChat(true));
+  label.addEventListener("pointerup", () => openChat(true));
   document.getElementById("chat-close").addEventListener("click", closeChat);
 
   // Auto pop-up after 2.5s so visitors notice the chatbot
