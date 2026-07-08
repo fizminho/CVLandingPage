@@ -178,7 +178,6 @@ async function handleSend() {
       input.disabled = false;
       btn.disabled = false;
       input.placeholder = `Ask a question… (${MAX_QUESTIONS - questionCount} left)`;
-      input.focus();
     }
   }
 }
@@ -195,7 +194,7 @@ function lockInput(input, btn) {
 }
 
 function initChat() {
-  document.getElementById("chat-send").addEventListener("click", handleSend);
+  document.getElementById("chat-send").addEventListener("pointerup", (e) => { e.preventDefault(); handleSend(); });
   document.getElementById("chat-input").addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
   });
@@ -212,11 +211,7 @@ function initChat() {
     label.classList.remove("chat-label--hidden");
   }
 
-  label.addEventListener("click", () => openChat(true));
-  label.addEventListener("pointerup", () => openChat(true));
-  document.getElementById("chat-close").addEventListener("click", closeChat);
-
-  // Auto pop-up after 2.5s so visitors notice the chatbot
-  setTimeout(openChat, 2500);
+  label.addEventListener("pointerup", (e) => { e.preventDefault(); openChat(true); });
+  document.getElementById("chat-close").addEventListener("pointerup", (e) => { e.preventDefault(); closeChat(); });
 }
 initChat();
