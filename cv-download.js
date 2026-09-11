@@ -138,13 +138,6 @@ async function downloadCV() {
     });
   }
 
-  // --- REFERENCES ---
-  if (c.references?.length) {
-    sectionHeading("References");
-    c.references.forEach((r) => {
-      line(`${r.name}  |  ${r.company}  |  ${r.phone}`, 10);
-    });
-  }
 
   doc.save("Muhammad-Hafiz-CV.pdf");
   await logDownload();
