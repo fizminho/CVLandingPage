@@ -168,19 +168,8 @@ const CONFIG = {
     { system: "Microsoft Dynamics 365", duration: "1 Year" },
   ],
 
-  references: [
-    {
-      name: "Azharul",
-      company: "IFCA MSC BHD",
-      phone: "016-921 1608",
-    },
-    {
-      name: "Chuah Tse Leong",
-      company: "Dialog Berhad",
-      phone: "012-977 8986",
-    },
-  ],
+
 
   // Controls which sections appear and their order on the page
-  sections: ["about", "erp", "experience", "projects", "competencies", "skills", "previousskills", "languages", "education", "references", "contact"],
+  sections: ["about", "erp", "experience", "projects", "competencies", "skills", "previousskills", "languages", "education", "contact"],
 };
