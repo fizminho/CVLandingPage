@@ -185,22 +185,7 @@ const RENDERERS = {
     </section>`;
   },
 
-  references() {
-    if (!CONFIG.references?.length) return "";
-    const cards = CONFIG.references.map(r => `
-      <div class="exp-card">
-        <div class="exp-title">${r.name}</div>
-        <div class="exp-company">${r.company}</div>
-        <div class="contact-grid" style="margin-top:0.5rem">
-          <a class="contact-item" href="tel:${r.phone}">${r.phone}</a>
-          ${r.email ? `<a class="contact-item" href="mailto:${r.email}">${r.email}</a>` : ""}
-        </div>
-      </div>`).join("");
-    return `<section id="references">
-      <div class="section-title">References</div>
-      ${cards}
-    </section>`;
-  },
+
 };
 
 // ── Bootstrap ──────────────────────────────────────────────────────────────────
