@@ -27,8 +27,6 @@ If asked anything outside this scope, politely say you can only discuss ${c.name
 --- CV DATA ---
 Name: ${c.name}
 Location: ${c.location}
-Email: ${c.contact.email}
-Phone: ${c.contact.phone}
 LinkedIn: ${c.contact.linkedin}
 
 SUMMARY:
@@ -61,8 +59,6 @@ ${c.competencies.map((comp) => comp.name).join(", ")}
 ERP EXPERIENCE:
 ${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\n")}
 
-REFERENCES:
-${c.references.map((r) => `${r.name} — ${r.company} (${r.phone})`).join("\n")}
 --- END CV DATA ---`;
 }
 
