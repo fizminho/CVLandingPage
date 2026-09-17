@@ -4,9 +4,9 @@ const SUPABASE_ANON_KEY = "__SUPABASE_ANON_KEY__";
 
 const MODELS = [
   "gemini-2.5-flash",
-  "gemini-2.5-pro",
-  "gemini-3.1-flash-lite",
-  "gemini-3.6-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
 ];
 
 const RETRIES_PER_MODEL = 3;
@@ -78,7 +78,10 @@ async function callGemini(model, messages) {
       }),
     }
   );
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status}: ${errBody}`);
+  }
   const data = await res.json();
   return data.candidates[0].content.parts[0].text;
 }
@@ -88,7 +91,8 @@ async function sendToGemini(messages) {
     for (let attempt = 0; attempt < RETRIES_PER_MODEL; attempt++) {
       try {
         return await callGemini(model, messages);
-      } catch {
+      } catch (err) {
+        console.error(`[chatbot] ${model} attempt ${attempt + 1} failed:`, err);
         if (attempt < RETRIES_PER_MODEL - 1) await sleep(1000 * 2 ** attempt);
       }
     }
