@@ -148,10 +148,7 @@ async function logDownload() {
     await fetch("/api/log/download", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userAgent: navigator.userAgent,
-        referrer: document.referrer || "direct",
-      }),
+      body: JSON.stringify({}),
       keepalive: true,
     });
   } catch (error) {
