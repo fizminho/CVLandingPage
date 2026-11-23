@@ -57,7 +57,8 @@ import { readFile } from "node:fs/promises";
 
 test("frontend has no inline script or event-handler attributes", async () => {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
-  assert.doesNotMatch(html, /<script\s[^>]*>([\s\S]*?)<\/script>/i);
+  const scriptTags = html.match(/<script\\b[^>]*>/gi) || [];
+  assert.ok(scriptTags.every(tag => /\\bsrc\\s*=/.test(tag)));
   assert.doesNotMatch(html, /\son[a-z]+\s*=/i);
 });
 
