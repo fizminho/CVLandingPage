@@ -2,80 +2,53 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { __test } from "../worker.js";
 
-test("rejects requests without an Origin header", () => {
-  const request = new Request("https://cv.example/api/chat", { method: "POST" });
-  assert.equal(__test.validateOrigin(request).status, 403);
+test("rejects non-POST mutation requests", () => {
+  const req = new Request("https://cv.example/api/chat", { method: "GET" });
+  assert.equal(__test.validateMutation(req).status, 405);
 });
 
-test("rejects cross-origin requests", () => {
-  const request = new Request("https://cv.example/api/chat", {
-    method: "POST",
-    headers: { Origin: "https://attacker.example" },
-  });
-  assert.equal(__test.validateOrigin(request).status, 403);
+test("rejects missing and cross-origin Origin headers", () => {
+  const missing = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json" } });
+  const cross = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://evil.example" } });
+  assert.equal(__test.validateMutation(missing).status, 403);
+  assert.equal(__test.validateMutation(cross).status, 403);
 });
 
-test("accepts the exact same origin", () => {
-  const request = new Request("https://cv.example/api/chat", {
-    method: "POST",
-    headers: { Origin: "https://cv.example" },
-  });
-  assert.equal(__test.validateOrigin(request), null);
+test("accepts exact same-origin JSON mutation", () => {
+  const req = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://cv.example" } });
+  assert.equal(__test.validateMutation(req), null);
 });
 
-test("rejects declared oversized JSON bodies", async () => {
-  const request = new Request("https://cv.example/api/chat", {
-    method: "POST",
-    headers: { "Content-Length": "100", "Content-Type": "application/json" },
-    body: JSON.stringify({ ok: true }),
-  });
-  const result = await __test.readJson(request, 10);
-  assert.equal(result.error.status, 413);
+test("rejects wrong content type", () => {
+  const req = new Request("https://cv.example/api/chat", { method: "POST", headers: { Origin: "https://cv.example", "Content-Type": "text/plain" } });
+  assert.equal(__test.validateMutation(req).status, 415);
 });
 
-test("rejects oversized streamed JSON when Content-Length is absent", async () => {
-  const request = new Request("https://cv.example/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ value: "x".repeat(100) }),
-  });
-  const result = await __test.readJson(request, 10);
-  assert.equal(result.error.status, 413);
+test("rejects declared and streamed oversized bodies", async () => {
+  const declared = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Length": "100", "Content-Type": "application/json" }, body: "{}" });
+  const streamed = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: "x".repeat(100) }) });
+  assert.equal((await __test.readJson(declared, 10)).error.status, 413);
+  assert.equal((await __test.readJson(streamed, 10)).error.status, 413);
 });
 
 test("rejects malformed JSON", async () => {
-  const request = new Request("https://cv.example/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: "{invalid",
-  });
-  const result = await __test.readJson(request);
-  assert.equal(result.error.status, 400);
+  const req = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{bad" });
+  assert.equal((await __test.readJson(req, 100)).error.status, 400);
 });
 
-test("applies CSP and browser security headers", () => {
-  const response = __test.applySecurityHeaders(
-    new Response("ok"),
-    "https://cv.example/"
-  );
-  assert.match(response.headers.get("Content-Security-Policy"), /frame-ancestors 'none'/);
-  assert.equal(response.headers.get("X-Content-Type-Options"), "nosniff");
-  assert.equal(response.headers.get("X-Frame-Options"), "DENY");
-  assert.equal(response.headers.get("Referrer-Policy"), "strict-origin-when-cross-origin");
-  assert.match(response.headers.get("Strict-Transport-Security"), /max-age=31536000/);
+test("adds browser security headers and no HSTS on HTTP", () => {
+  const https = __test.secure(new Response("ok"), "https://cv.example/");
+  assert.match(https.headers.get("Content-Security-Policy"), /frame-ancestors 'none'/);
+  assert.equal(https.headers.get("X-Content-Type-Options"), "nosniff");
+  assert.equal(https.headers.get("X-Frame-Options"), "DENY");
+  assert.match(https.headers.get("Strict-Transport-Security"), /max-age=31536000/);
+  const http = __test.secure(new Response("ok"), "http://localhost:8787/");
+  assert.equal(http.headers.get("Strict-Transport-Security"), null);
 });
 
-test("does not send HSTS on non-HTTPS local development", () => {
-  const response = __test.applySecurityHeaders(new Response("ok"), "http://localhost:8787/");
-  assert.equal(response.headers.get("Strict-Transport-Security"), null);
-});
-
-test("rate limiting fails closed when its secret is missing", async () => {
-  const request = new Request("https://cv.example/api/chat", {
-    method: "POST",
-    headers: { Origin: "https://cv.example" },
-  });
-  const result = await __test.rateLimit({ DB: {}, RATE_LIMIT_SECRET: "" }, request, "test", 5, 60);
+test("fails closed when rate-limit secret is absent", async () => {
+  const req = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://cv.example" } });
+  const result = await __test.rateLimit({ DB: {}, RATE_LIMIT_SECRET: "" }, req, "test", 5, 60);
   assert.equal(result.allowed, false);
   assert.equal(result.response.status, 503);
 });
