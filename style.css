@@ -265,6 +265,7 @@ section { margin-top: 3rem; }
   gap: 1rem;
 }
 .project-card {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -340,6 +341,21 @@ section { margin-top: 3rem; }
   margin-top: 0.25rem;
 }
 .project-link:hover { text-decoration: underline; }
+.project-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.project-link:focus-visible {
+  outline: none;
+  text-decoration: underline;
+}
+.project-card:has(.project-link:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
 
 /* ── COMPETENCIES ──────────────────────────────────────────────────── */
 .competencies-grid {
