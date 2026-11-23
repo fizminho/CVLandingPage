@@ -2,142 +2,167 @@ async function downloadCV() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
 
-  const L = 20;       // left margin
-  const R = 190;      // right margin
-  const W = R - L;    // usable width
+  const LEFT = 20;
+  const RIGHT = 190;
+  const WIDTH = RIGHT - LEFT;
+  const PAGE_BOTTOM = 280;
+  const LINE_HEIGHT = 5.5;
   let y = 20;
 
-  const LINE_H = 6;
-  const PAGE_H = 280;
-
-  function checkPage(needed = LINE_H) {
-    if (y + needed > PAGE_H) { doc.addPage(); y = 20; }
+  function ensureSpace(height = LINE_HEIGHT) {
+    if (y + height > PAGE_BOTTOM) {
+      doc.addPage();
+      y = 20;
+    }
   }
 
-  function line(text, size = 11, style = "normal", color = [30, 30, 30]) {
-    checkPage();
-    doc.setFontSize(size);
+  function writeText(value, options = {}) {
+    const {
+      size = 10,
+      style = "normal",
+      color = [35, 35, 35],
+      indent = 0,
+      gapAfter = 0,
+    } = options;
+    const text = String(value ?? "").trim();
+    if (!text) return;
+
     doc.setFont("helvetica", style);
-    doc.setTextColor(...color);
-    doc.text(text, L, y);
-    y += LINE_H;
-  }
-
-  function multiLine(text, size = 11) {
     doc.setFontSize(size);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(30, 30, 30);
-    const lines = doc.splitTextToSize(text, W);
-    lines.forEach((l) => { checkPage(); doc.text(l, L, y); y += LINE_H; });
+    doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(text, WIDTH - indent);
+    lines.forEach((wrappedLine) => {
+      ensureSpace(LINE_HEIGHT);
+      doc.text(wrappedLine, LEFT + indent, y);
+      y += LINE_HEIGHT;
+    });
+    y += gapAfter;
   }
 
-  function sectionHeading(title) {
-    y += 3;
-    checkPage(LINE_H + 2);
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(30, 30, 30);
-    doc.text(title.toUpperCase(), L, y);
+  function heading(title) {
     y += 2;
-    doc.setDrawColor(180, 180, 180);
-    doc.line(L, y, R, y);
-    y += LINE_H;
+    ensureSpace(LINE_HEIGHT + 2);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(25, 25, 25);
+    doc.text(title.toUpperCase(), LEFT, y);
+    y += 2;
+    doc.setDrawColor(175, 175, 175);
+    doc.line(LEFT, y, RIGHT, y);
+    y += LINE_HEIGHT;
   }
 
-  function gap(n = 3) { y += n; }
+  function bullet(text) {
+    writeText(`• ${text}`, { indent: 1, gapAfter: 0.5 });
+  }
 
   const c = CONFIG;
 
-  // --- NAME & CONTACT ---
-  line(c.name, 16, "bold");
-  line(c.tagline, 11, "normal", [80, 80, 80]);
-  line(`${c.location}  |  ${c.contact.phone}  |  ${c.contact.email}`, 10);
-  line(c.contact.linkedin, 10, "normal", [80, 80, 80]);
-  if (c.preferredposition) line(`Preferred Positions: ${c.preferredposition}`, 10, "italic", [80, 80, 80]);
-  gap();
+  // Contact details are optional and are only printed when configured.
+  writeText(c.name, { size: 16, style: "bold", gapAfter: 1 });
+  writeText(c.tagline, { size: 11, color: [75, 75, 75] });
+  const contactDetails = [
+    c.location,
+    c.contact?.phone,
+    c.contact?.email,
+    c.contact?.linkedin,
+  ].filter((value) => typeof value === "string" && value.trim());
+  if (contactDetails.length) {
+    writeText(contactDetails.join(" | "), { size: 9, color: [75, 75, 75] });
+  }
+  if (c.preferredposition) {
+    writeText(`Target Roles: ${c.preferredposition}`, { size: 9, color: [75, 75, 75] });
+  }
 
-  // --- SUMMARY ---
-  sectionHeading("Summary");
-  multiLine(c.about);
+  heading("Professional Summary");
+  writeText(c.about, { size: 10, gapAfter: 1 });
 
-  // --- CORE COMPETENCIES ---
-  if (c.competencies?.length) {
-    sectionHeading("Core Competencies");
-    const cols = 3;
-    const colW = W / cols;
-    const rows = Math.ceil(c.competencies.length / cols);
-    for (let r = 0; r < rows; r++) {
-      checkPage();
-      for (let col = 0; col < cols; col++) {
-        const item = c.competencies[r * cols + col];
-        if (item) {
-          doc.setFontSize(10);
-          doc.setFont("helvetica", "normal");
-          doc.setTextColor(30, 30, 30);
-          doc.text(`- ${item.name}`, L + col * colW, y);
-        }
+  // Keep achievements in the downloadable CV, not only on the web page.
+  if (c.achievements?.length) {
+    heading("Selected Project Achievements");
+    c.achievements.forEach((item) => {
+      writeText(item.title, { size: 10, style: "bold", gapAfter: 0 });
+      if (item.scale) {
+        writeText(item.scale, { size: 9, style: "italic", color: [75, 75, 75], gapAfter: 0 });
       }
-      y += LINE_H;
-    }
-  }
-
-  // --- ERP EXPERIENCE ---
-  sectionHeading("ERP Experience");
-  c.erpExperience.forEach((e) => line(`${e.system} — ${e.duration}`));
-
-  // --- WORK EXPERIENCE ---
-  sectionHeading("Work Experience");
-  c.experience.forEach((exp) => {
-    line(`${exp.title}`, 11, "bold");
-    line(`${exp.company}  |  ${exp.period}`, 10, "normal", [80, 80, 80]);
-    gap(2);
-    exp.points.forEach((p) => multiLine(`- ${p}`));
-    line(`Skills: ${exp.skills.join(", ")}`, 10, "italic", [100, 100, 100]);
-    gap(4);
-  });
-
-  // --- SKILLS ---
-  sectionHeading("Technical Skills");
-  const skillText = c.skills.map((s) => `${s.name} (since ${s.since})`).join("   |   ");
-  multiLine(skillText);
-
-  if (c.previousskills?.length) {
-    gap(2);
-    line("Previous Skills:", 10, "italic", [80, 80, 80]);
-    multiLine(c.previousskills.map((s) => s.name).join("   |   "), 10);
-  }
-
-  if (c.languages?.length) {
-    gap(2);
-    line("Languages:", 10, "italic", [80, 80, 80]);
-    multiLine(c.languages.map((l) => `${l.name} — ${l.proficiency}`).join("   |   "), 10);
-  }
-
-  // --- EDUCATION ---
-  sectionHeading("Education");
-  c.education.forEach((edu) => {
-    line(edu.degree, 11, "bold");
-    line(edu.institution, 11);
-    line(`${edu.grade}  |  ${edu.period}`, 10, "normal", [80, 80, 80]);
-    if (edu.activities?.length) {
-      gap(2);
-      edu.activities.forEach((a) => multiLine(`- ${a}`));
-    }
-    gap(4);
-  });
-
-  // --- PROJECTS ---
-  if (c.projects?.length) {
-    sectionHeading("Projects");
-    c.projects.forEach((p) => {
-      line(p.title, 11, "bold");
-      multiLine(p.description);
-      line(`Tech: ${p.tech.join(", ")}`, 10, "italic", [100, 100, 100]);
-      if (p.link) line(p.link, 10, "normal", [80, 80, 80]);
-      gap(4);
+      writeText(item.description, { size: 9.5, gapAfter: 2 });
     });
   }
 
+  heading("Professional Experience");
+  c.experience?.forEach((exp) => {
+    writeText(exp.title, { size: 10, style: "bold", gapAfter: 0 });
+    writeText(`${exp.company} | ${exp.period}`, { size: 9, color: [75, 75, 75], gapAfter: 1 });
+    exp.points?.forEach(bullet);
+    if (exp.skills?.length) {
+      writeText(`Technologies: ${exp.skills.join(", ")}`, {
+        size: 9,
+        style: "italic",
+        color: [90, 90, 90],
+        gapAfter: 2,
+      });
+    }
+  });
+
+  if (c.skills?.length || c.previousskills?.length) {
+    heading("Technical Skills");
+    if (c.skills?.length) {
+      writeText(c.skills.map((skill) => skill.name).join(", "), { size: 9.5 });
+    }
+    if (c.previousskills?.length) {
+      writeText(`Additional: ${c.previousskills.map((skill) => skill.name).join(", ")}`, {
+        size: 9.5,
+      });
+    }
+  }
+
+  if (c.competencies?.length) {
+    heading("Core Competencies");
+    // A single linear list is easier for ATS parsers than a multi-column layout.
+    c.competencies.forEach((item) => bullet(item.name));
+  }
+
+  if (c.erpExperience?.length) {
+    heading("ERP Experience");
+    c.erpExperience.forEach((item) => {
+      writeText(`${item.system} | ${item.duration}`, { size: 9.5 });
+    });
+  }
+
+  if (c.education?.length) {
+    heading("Education");
+    c.education.forEach((edu) => {
+      writeText(edu.degree, { size: 10, style: "bold", gapAfter: 0 });
+      writeText(edu.institution, { size: 9.5, gapAfter: 0 });
+      writeText(`${edu.grade} | ${edu.period}`, { size: 9, color: [75, 75, 75] });
+      edu.activities?.forEach(bullet);
+      y += 2;
+    });
+  }
+
+  if (c.projects?.length) {
+    heading("Additional Projects");
+    c.projects.forEach((project) => {
+      writeText(project.title, { size: 10, style: "bold", gapAfter: 0 });
+      writeText(project.description, { size: 9.5, gapAfter: 0 });
+      if (project.tech?.length) {
+        writeText(`Technologies: ${project.tech.join(", ")}`, {
+          size: 9,
+          style: "italic",
+          color: [90, 90, 90],
+        });
+      }
+      if (project.link) writeText(project.link, { size: 9, color: [75, 75, 75] });
+      y += 2;
+    });
+  }
+
+  if (c.languages?.length) {
+    heading("Languages");
+    writeText(c.languages.map((language) => `${language.name} - ${language.proficiency}`).join("; "), {
+      size: 9.5,
+    });
+  }
 
   doc.save("Muhammad-Hafiz-CV.pdf");
   await logDownload();
