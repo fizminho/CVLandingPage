@@ -36,7 +36,7 @@ try {
   check((headers.get("content-security-policy") || "").includes("frame-ancestors 'none'"), "CSP blocks framing");
   check((headers.get("strict-transport-security") || "").includes("max-age="), "HSTS has max-age");
   const body = await home.text();
-  check(body.length > 0 && /<html[\\s>]/i.test(body), "Homepage returns HTML content");
+  check(body.length > 0 && /<html[\s>]/i.test(body), "Homepage returns HTML content");
 } catch (error) {
   console.error("FAIL  Homepage request failed:", error.message);
   failures.push("Homepage request failed");
@@ -54,13 +54,13 @@ try {
   check(response.status === 201, `Session creation returns HTTP 201 (got ${response.status})`);
   check(response.headers.get("cache-control") === "no-store", "Session response is not cacheable");
   const setCookie = response.headers.get("set-cookie") || "";
-  const cookieMatch = setCookie.match(/(?:^|[,;]\\s*)__Host-cv_session=([A-Za-z0-9_-]{40,64})/);
+  const cookieMatch = setCookie.match(/(?:^|[,;]\s*)__Host-cv_session=([A-Za-z0-9_-]{40,64})/);
   sessionCookie = cookieMatch ? `__Host-cv_session=${cookieMatch[1]}` : null;
   check(Boolean(sessionCookie), "Session cookie is issued with a valid token");
-  check(/\\bHttpOnly\\b/i.test(setCookie), "Session cookie is HttpOnly");
-  check(/\\bSecure\\b/i.test(setCookie), "Session cookie is Secure");
-  check(/\\bSameSite=Strict\\b/i.test(setCookie), "Session cookie uses SameSite=Strict");
-  check(/\\bPath=\\//i.test(setCookie), "Session cookie is scoped to root path");
+  check(/\bHttpOnly\b/i.test(setCookie), "Session cookie is HttpOnly");
+  check(/\bSecure\b/i.test(setCookie), "Session cookie is Secure");
+  check(/\bSameSite=Strict\b/i.test(setCookie), "Session cookie uses SameSite=Strict");
+  check(/\bPath=\\//i.test(setCookie), "Session cookie is scoped to root path");
 } catch (error) {
   console.error("FAIL  Session creation failed:", error.message);
   failures.push("Session creation failed");
@@ -108,8 +108,8 @@ for (const path of ["/api/chat", "/api/log/download"]) {
 }
 
 if (failures.length) {
-  console.error(`\\nSmoke test failed: ${failures.length} check(s) failed.`);
+  console.error(`\nSmoke test failed: ${failures.length} check(s) failed.`);
   process.exitCode = 1;
 } else {
-  console.log("\\nAll production smoke checks passed.");
+  console.log("\nAll production smoke checks passed.");
 }
