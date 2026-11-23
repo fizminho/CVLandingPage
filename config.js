@@ -107,21 +107,25 @@ const CONFIG = {
     },
   ],
 
-  // Add new projects here freely
+  // Product projects
   projects: [
     {
-      title: "BayarLah",
+      id: "kitanotes",
+      title: "KitaNotes",
       description:
-        "A personal finance web app to help users manage and track their split payments and expenses easily.",
-      tech: ["Next.js", "Vercel"],
-      link: "https://bayarlah.binalah.com/",
+        "A mobile-first workspace for private notes, shared collaboration, reminders and AI-assisted organisation.",
+      tech: ["React", "TypeScript", "Cloudflare Workers", "D1", "Gemini", "PWA"],
+      link: "https://kitanotes.binalah.com/",
+      statusId: "kitanotes",
     },
     {
-      title: "SewaLah",
+      id: "bayarlah",
+      title: "BayarLah",
       description:
-        "A rental management system to ease the rental process targeting small property owners with rent model rent by room/property.",
-      tech: ["Next.js", "C#", "AWS Cloud Services", "Netlify"],
-      link: "",
+        "A receipt-sharing and bill-splitting app. Upload a receipt, share the link and split the bill with others.",
+      tech: ["Next.js", "Cloudflare Workers", "D1", "Gemini OCR"],
+      link: "https://bayarlah.binalah.com/",
+      statusId: "bayarlah",
     },
     {
       title: "IFCA ERP Customisations",
