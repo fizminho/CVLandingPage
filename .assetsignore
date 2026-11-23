@@ -3,6 +3,7 @@
 node_modules
 .wrangler
 scripts
+migrations
 README.md
 PLAN.md
 cv.md
