@@ -11,3 +11,6 @@ package.json
 wrangler.toml
 worker.js
 .assetsignore
+docs
+tests
+package-lock.json
