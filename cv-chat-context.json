@@ -146,5 +146,46 @@
         "ASP.NET"
       ]
     }
+  ],
+  "preferredPositions": [
+    "BE Developer",
+    "Lead Developer",
+    "Technical Consultant",
+    "Solution Architect",
+    "Business Analyst"
+  ],
+  "languages": [
+    {
+      "name": "English",
+      "proficiency": "Professional Working Proficiency"
+    },
+    {
+      "name": "Malay",
+      "proficiency": "Native or Bilingual Proficiency"
+    }
+  ],
+  "erpExperience": [
+    {
+      "system": "IFCA Property ERP",
+      "duration": "4 Years"
+    },
+    {
+      "system": "Microsoft Dynamics 365",
+      "duration": "1 Year"
+    }
+  ],
+  "competencies": [
+    "System Design & Architecture",
+    "API Integration & Web Services",
+    "ERP Customisation",
+    "Technical Consulting",
+    "Business Requirements Analysis",
+    "Stakeholder Communication",
+    "Database Design & Optimisation",
+    "Batch Processing & Automation",
+    "Cloud Infrastructure (AWS)",
+    "Message-Driven Architecture",
+    "Technical Documentation",
+    "Team Mentoring & Training"
   ]
 }
