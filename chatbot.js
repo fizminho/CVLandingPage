@@ -1,188 +1,98 @@
-const SESSION_ID = crypto.randomUUID();
 const MAX_QUESTIONS = 5;
 const SEND_COOLDOWN_MS = 5000;
-
 let questionCount = 0;
 let lastSentAt = 0;
 let isWaiting = false;
 
-function buildSystemPrompt() {
-  const c = CONFIG;
-  return `You are a personal assistant for ${c.name}.
-You ONLY answer questions about his CV, skills, work experience, education, and projects.
-If asked anything outside this scope, politely say you can only discuss ${c.name.split(" ")[1]}'s professional profile.
-
---- CV DATA ---
-Name: ${c.name}
-Location: ${c.location}
-LinkedIn: ${c.contact.linkedin}
-
-SUMMARY:
-${c.about}
-
-WORK EXPERIENCE:
-${c.experience.map((e) => `${e.title} at ${e.company} (${e.period})\n${e.points.map((p) => `- ${p}`).join("\n")}\nSkills: ${e.skills.join(", ")}`).join("\n\n")}
-
-PREFERRED POSITIONS:
-${c.preferredposition}
-
-SKILLS:
-${c.skills.map((s) => `${s.name} (since ${s.since})`).join(", ")}
-
-PREVIOUS/OTHER SKILLS:
-${c.previousskills.map((s) => `${s.name} (since ${s.since})`).join(", ")}
-
-LANGUAGES:
-${c.languages.map((l) => `${l.name}: ${l.proficiency}`).join("\n")}
-
-EDUCATION:
-${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})\nActivities: ${e.activities.join("; ")}`).join("\n")}
-
-PROJECTS:
-${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\n")}
-
-COMPETENCIES:
-${c.competencies.map((comp) => comp.name).join(", ")}
-
-ERP EXPERIENCE:
-${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\n")}
-
---- END CV DATA ---`;
-}
-
-async function saveToDatabase(role, message) {
-  try {
-    await fetch("/api/log/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId: SESSION_ID, role, message }),
-      keepalive: true,
-    });
-  } catch (error) {
-    console.warn("[chatbot] D1 logging failed:", error);
-  }
-}
-
-const chatHistory = [];
-
 function appendMessage(role, text) {
   const box = document.getElementById("chat-messages");
-  const div = document.createElement("div");
-  div.className = `chat-msg chat-msg--${role}`;
-  div.textContent = text;
-  box.appendChild(div);
+  const node = document.createElement("div");
+  node.className = `chat-msg chat-msg--${role}`;
+  node.textContent = String(text);
+  box.appendChild(node);
   box.scrollTop = box.scrollHeight;
+  return node;
 }
 
-async function sendToGemini(messages) {
-  const response = await fetch("/api/chat", {
+async function postJson(path, body) {
+  const response = await fetch(path, {
     method: "POST",
+    credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: buildSystemPrompt(),
-      messages,
-    }),
+    body: JSON.stringify(body),
   });
-
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.error || `Chat request failed: HTTP ${response.status}`);
-  }
-  if (typeof data.answer !== "string" || !data.answer.trim()) {
-    throw new Error("Chat service returned an empty response");
-  }
-  return data.answer;
+  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  return data;
+}
+
+async function initialiseSession() {
+  try { await postJson("/api/session", {}); }
+  catch { appendMessage("model", "Chat is temporarily unavailable. Please refresh and try again later."); }
 }
 
 async function handleSend() {
   const input = document.getElementById("chat-input");
-  const btn = document.getElementById("chat-send");
-  const text = input.value.trim();
-
-  if (input.disabled || isWaiting || !text) return;
-  if (questionCount >= MAX_QUESTIONS) {
-    lockInput(input, btn);
-    return;
-  }
-
-  const now = Date.now();
-  const elapsed = now - lastSentAt;
+  const button = document.getElementById("chat-send");
+  const message = input.value.trim();
+  if (!message || isWaiting || input.disabled) return;
+  if (questionCount >= MAX_QUESTIONS) { lockInput(input, button); return; }
+  const elapsed = Date.now() - lastSentAt;
   if (elapsed < SEND_COOLDOWN_MS) {
-    const wait = Math.ceil((SEND_COOLDOWN_MS - elapsed) / 1000);
-    appendMessage("model", `Please wait ${wait} second${wait > 1 ? "s" : ""} before sending another message.`);
+    const seconds = Math.ceil((SEND_COOLDOWN_MS - elapsed) / 1000);
+    appendMessage("model", `Please wait ${seconds} second${seconds === 1 ? "" : "s"} before sending another message.`);
     return;
   }
-
   isWaiting = true;
-  lastSentAt = now;
-  questionCount++;
+  lastSentAt = Date.now();
   input.disabled = true;
-  btn.disabled = true;
+  button.disabled = true;
   input.value = "";
-
-  appendMessage("user", text);
-  void saveToDatabase("user", text);
-  chatHistory.push({ role: "user", parts: [{ text }] });
-
-  appendMessage("model", "…");
-  const thinking = document.querySelector(".chat-msg--model:last-child");
-
+  appendMessage("user", message);
+  const pending = appendMessage("model", "…");
   try {
-    const reply = await sendToGemini(chatHistory);
-    chatHistory.push({ role: "model", parts: [{ text: reply }] });
-    thinking.textContent = reply;
-    void saveToDatabase("assistant", reply);
+    const data = await postJson("/api/chat", { message });
+    questionCount++;
+    pending.textContent = data.answer;
   } catch (error) {
-    console.error("[chatbot] Request failed:", error);
-    thinking.textContent = "Sorry, I'm unavailable right now. Please try again later.";
+    pending.textContent = "Sorry, I'm unavailable right now. Please try again later.";
+    if (/five-question|limit has been reached/i.test(error.message)) questionCount = MAX_QUESTIONS;
+    console.warn("[chatbot] Chat request failed");
   } finally {
     isWaiting = false;
-    if (questionCount >= MAX_QUESTIONS) {
-      lockInput(input, btn);
-    } else {
+    if (questionCount >= MAX_QUESTIONS) lockInput(input, button);
+    else {
       input.disabled = false;
-      btn.disabled = false;
+      button.disabled = false;
       input.placeholder = `Ask a question… (${MAX_QUESTIONS - questionCount} left)`;
     }
   }
 }
 
-function lockInput(input, btn) {
+function lockInput(input, button) {
   input.disabled = true;
-  btn.disabled = true;
+  button.disabled = true;
   input.placeholder = "Question limit reached. Refresh to start over.";
-  const msgs = document.querySelectorAll(".chat-msg--model");
-  const last = msgs[msgs.length - 1];
-  if (last && last.textContent.includes("limit")) return;
-  appendMessage("model", "You've reached the 5-question limit for this session. Please refresh the page to start a new conversation.");
 }
 
 function initChat() {
-  document.getElementById("chat-send").addEventListener("pointerup", (e) => {
-    e.preventDefault();
-    handleSend();
-  });
-  document.getElementById("chat-input").addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  });
-
+  const input = document.getElementById("chat-input");
+  const button = document.getElementById("chat-send");
   const widget = document.getElementById("chat-widget");
   const label = document.getElementById("chat-label");
-
-  function openChat(fromUser) {
+  button.addEventListener("click", handleSend);
+  input.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); handleSend(); }
+  });
+  label.addEventListener("click", () => {
     widget.classList.add("chat-widget--open");
     label.classList.add("chat-label--hidden");
-    if (fromUser) document.getElementById("chat-input").focus();
-  }
-  function closeChat() {
+    input.focus();
+  });
+  document.getElementById("chat-close").addEventListener("click", () => {
     widget.classList.remove("chat-widget--open");
     label.classList.remove("chat-label--hidden");
-  }
-
-  label.addEventListener("pointerup", (e) => { e.preventDefault(); openChat(true); });
-  document.getElementById("chat-close").addEventListener("pointerup", (e) => { e.preventDefault(); closeChat(); });
+  });
+  void initialiseSession();
 }
 initChat();
