@@ -14,6 +14,7 @@ This is the security baseline for a public, anonymous CV landing page. It adapts
 - index.html contains no inline JavaScript or inline event handlers.
 - External links accept HTTPS URLs only, reject embedded credentials, and use noopener noreferrer.
 - Worker responses set CSP, HSTS on HTTPS, frame denial, MIME sniffing protection, strict referrer policy, permissions policy, COOP and CORP.
+- All static asset requests pass through the Worker so the security headers also apply to the homepage and frontend assets.
 - Public frontend code and CV data are not treated as secrets.
 
 ### API, sessions and abuse protection
@@ -41,14 +42,18 @@ This is the security baseline for a public, anonymous CV landing page. It adapts
 - [ ] Confirm the DB binding points to the production D1 database.
 - [ ] Confirm remote migrations 0001 and 0002 are applied.
 - [ ] Confirm the scheduled cleanup trigger is deployed.
-- [ ] Smoke-test session creation, chat history, five-question enforcement, rate-limit responses and download logging on the production HTTPS origin.
+- [ ] Manually verify chat history, five-question enforcement, rate-limit responses and download logging on the production HTTPS origin. Automated smoke checks deliberately do not call Gemini or create download log entries.
 - [ ] Inspect CSP violations in browser DevTools and add only necessary asset hosts after review.
 - [ ] Review the privacy notice for chat messages sent to Google Gemini and stored in D1 for 30 days.
 
 ## Verification
 Run npm install, npm test, npm run cf:build and npm audit --audit-level=high.
 
-The automated tests cover request method/origin/content-type enforcement, bounded JSON parsing, security headers and fail-closed rate-limit configuration. They do not replace live D1 integration tests, production smoke tests, Cloudflare WAF configuration or independent penetration testing.
+The unit tests cover request method/origin/content-type enforcement, bounded JSON parsing, security headers, frontend unsafe-sink checks and fail-closed rate-limit configuration.
+
+The production smoke test verifies the live homepage security headers, session creation and cookie attributes, authenticated API session validation using deliberately invalid payloads, unauthenticated API rejection and no-store responses. It does not consume Gemini quota or create download log entries.
+
+These automated checks do not replace live D1 integration tests, quota/rate-limit abuse testing, Cloudflare WAF configuration or independent penetration testing.
 
 ## Operational follow-ups
 - Consider Cloudflare WAF rate-limiting rules as a second edge layer if abuse is observed.
