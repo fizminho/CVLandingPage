@@ -29,6 +29,11 @@ export default {
 async function createSession(request, env) {
   const invalid = validateMutation(request);
   if (invalid) return invalid;
+  const parsed = await readJson(request, 128);
+  if (parsed.error) return parsed.error;
+  if (!parsed.data || typeof parsed.data !== "object" || Array.isArray(parsed.data) || Object.keys(parsed.data).length !== 0) {
+    return json({ error: "Invalid request body" }, 400);
+  }
   if (!env.DB || !hasRateLimitSecret(env)) return json({ error: "Service is not configured" }, 503);
   const current = await sessionFromRequest(request, env);
   if (current) return json({ ok: true });
