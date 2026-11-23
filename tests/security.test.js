@@ -80,3 +80,13 @@ test("fails closed when the rate-limit secret is too short", async () => {
   assert.equal(result.allowed, false);
   assert.equal(result.response.status, 503);
 });
+
+test("server-side CV context is valid JSON and contains only public profile fields", async () => {
+  const raw = await readFile(new URL("../cv-chat-context.json", import.meta.url), "utf8");
+  const profile = JSON.parse(raw);
+  assert.equal(profile.name, "Muhammad Hafiz Bin Zulkiflee Amin");
+  assert.ok(Array.isArray(profile.experience));
+  assert.ok(Array.isArray(profile.projects));
+  assert.equal("apiKey" in profile, false);
+  assert.equal("email" in profile, false);
+});
