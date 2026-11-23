@@ -113,7 +113,7 @@ async function logDownload(request, env) {
   try {
     await env.DB.prepare("INSERT INTO cv_downloads (id, user_agent, referrer) VALUES (?, ?, ?)")
       .bind(crypto.randomUUID(), clean(request.headers.get("User-Agent"), 512),
-        clean(request.headers.get("Referer"), 1024) || "direct").run();
+        referrerOrigin(request.headers.get("Referer"))).run();
     return json({ ok: true }, 201);
   } catch {
     return json({ error: "Unable to save download log" }, 503);
@@ -263,6 +263,7 @@ function json(data, status = 200, extra = {}) {
 function hasRateLimitSecret(env) { return typeof env.RATE_LIMIT_SECRET === "string" && new TextEncoder().encode(env.RATE_LIMIT_SECRET).byteLength >= 32; }
 function now() { return Math.floor(Date.now() / 1000); }
 function clean(value, max) { return value ? value.replace(/[\u0000-\u001f\u007f]/g, "").slice(0, max) || null : null; }
+function referrerOrigin(value) { try { return value ? new URL(value).origin : "direct"; } catch { return "direct"; } }
 function randomToken() { const bytes = crypto.getRandomValues(new Uint8Array(32)); let binary = ""; for (const b of bytes) binary += String.fromCharCode(b); return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, ""); }
 async function sha256(value) { return hex(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)))); }
 async function hmac(secret, value) {
