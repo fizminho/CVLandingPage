@@ -126,8 +126,8 @@ const CONFIG = {
     },
     {
       title: "KPKT HIMS",
-      scale: "Early go-live among competing solutions",
-      description: "Delivered HIMS integration for KPKT's E-SPA initiative, supporting go-live ahead of competing solutions.",
+      scale: "First to go live among competing HIMS solutions",
+      description: "Delivered HIMS integration for KPKT's E-SPA initiative, achieving the first go-live among competing HIMS solutions.",
     },
     {
       title: "GRP Accounting Integration",
