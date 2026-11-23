@@ -170,19 +170,37 @@ async function downloadCV() {
 
 async function logDownload() {
   try {
-    await fetch("/api/session", {
+    const sessionResponse = await fetch("/api/session", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({}),
       credentials: "same-origin",
+      cache: "no-store",
     });
-    await fetch("/api/log/download", {
+
+    if (!sessionResponse.ok) {
+      console.warn("[cv-download] Session creation failed:", sessionResponse.status);
+      return false;
+    }
+
+    const logResponse = await fetch("/api/log/download", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({}),
+      credentials: "same-origin",
+      cache: "no-store",
       keepalive: true,
     });
+
+    if (!logResponse.ok) {
+      console.warn("[cv-download] D1 download log rejected:", logResponse.status);
+      return false;
+    }
+
+    return true;
   } catch (error) {
-    console.warn("[cv-download] D1 logging failed:", error);
+    // Download must remain available even when analytics or the database is unavailable.
+    console.warn("[cv-download] D1 logging request failed:", error);
+    return false;
   }
 }
