@@ -107,6 +107,35 @@ const CONFIG = {
     },
   ],
 
+  // Selected project achievements
+  achievements: [
+    {
+      title: "SARA Untuk Semua 2026",
+      scale: "Approximately 22 million recipients",
+      description: "Supported the delivery and scaling of a nationwide government assistance programme, including large-scale transaction processing and system operations.",
+    },
+    {
+      title: "SARA 2025",
+      scale: "Approximately 5 million recipients",
+      description: "Supported the delivery and operation of a nationwide government assistance programme.",
+    },
+    {
+      title: "Hartalega NGC",
+      scale: "Microsoft Dynamics 365 ERP Go-Live",
+      description: "Contributed to the Microsoft Dynamics 365 ERP implementation and successful go-live.",
+    },
+    {
+      title: "KPKT HIMS",
+      scale: "Early go-live among competing solutions",
+      description: "Delivered HIMS integration for KPKT's E-SPA initiative, supporting go-live ahead of competing solutions.",
+    },
+    {
+      title: "GRP Accounting Integration",
+      scale: "IFCA ERP to GRP",
+      description: "Developed General Ledger integration enabling automated double-entry financial data exchange between IFCA ERP and GRP.",
+    },
+  ],
+
   // Product projects
   projects: [
     {
@@ -173,5 +202,5 @@ const CONFIG = {
 
 
   // Controls which sections appear and their order on the page
-  sections: ["about", "erp", "experience", "projects", "competencies", "skills", "previousskills", "languages", "education", "contact"],
+  sections: ["about", "achievements", "erp", "experience", "projects", "competencies", "skills", "previousskills", "languages", "education", "contact"],
 };
