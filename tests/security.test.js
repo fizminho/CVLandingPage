@@ -73,3 +73,10 @@ test("profile rendering avoids unsafe HTML sinks", async () => {
   assert.doesNotMatch(source, /innerHTML|insertAdjacentHTML|document\.write/);
   assert.match(source, /textContent/);
 });
+
+test("fails closed when the rate-limit secret is too short", async () => {
+  const req = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json", Origin: "https://cv.example" } });
+  const result = await __test.rateLimit({ DB: {}, RATE_LIMIT_SECRET: "weak-secret" }, req, "test", 5, 60);
+  assert.equal(result.allowed, false);
+  assert.equal(result.response.status, 503);
+});
