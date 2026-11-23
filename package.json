@@ -8,7 +8,7 @@
     "test": "node --test"
   },
   "devDependencies": {
-    "wrangler": "^4.166.0"
+    "wrangler": "4.166.0"
   },
   "engines": {
     "node": ">=20.0.0"
