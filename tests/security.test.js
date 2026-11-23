@@ -57,18 +57,18 @@ import { readFile } from "node:fs/promises";
 
 test("frontend has no inline script or event-handler attributes", async () => {
   const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
-  assert.doesNotMatch(html, /<script(?:\\s[^>]*)?>[\\s\\S]*?<\\/script>/i);
-  assert.doesNotMatch(html, /\\bon[a-z]+\\s*=/i);
+  assert.doesNotMatch(html, /<script\s[^>]*>([\s\S]*?)<\/script>/i);
+  assert.doesNotMatch(html, /\son[a-z]+\s*=/i);
 });
 
 test("browser chatbot does not construct prompts or submit assistant history", async () => {
   const source = await readFile(new URL("../chatbot.js", import.meta.url), "utf8");
-  assert.doesNotMatch(source, /buildSystemPrompt|systemInstruction|chatHistory|role:\\s*["']model["']/);
-  assert.match(source, /postJson\\(["']\\/api\\/chat["'],\\s*\\{\\s*message\\s*\\}/);
+  assert.doesNotMatch(source, /buildSystemPrompt|systemInstruction|chatHistory|role:\s*["']model["']/);
+  assert.ok(source.includes('postJson("/api/chat", { message })'));
 });
 
 test("profile rendering avoids unsafe HTML sinks", async () => {
   const source = await readFile(new URL("../app.js", import.meta.url), "utf8");
-  assert.doesNotMatch(source, /innerHTML|insertAdjacentHTML|document\\.write/);
+  assert.doesNotMatch(source, /innerHTML|insertAdjacentHTML|document\.write/);
   assert.match(source, /textContent/);
 });
