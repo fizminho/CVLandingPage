@@ -100,7 +100,7 @@ async function chat(request, env) {
 async function logDownload(request, env) {
   const invalid = validateMutation(request);
   if (invalid) return invalid;
-  if (!env.DB || !env.RATE_LIMIT_SECRET) return json({ error: "Database is not configured" }, 503);
+  if (!env.DB || !hasRateLimitSecret(env)) return json({ error: "Database is not configured" }, 503);
   const session = await sessionFromRequest(request, env);
   if (!session) return json({ error: "Session expired" }, 401);
   const parsed = await readJson(request, 128);
