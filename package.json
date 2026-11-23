@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "cf:build": "node --check worker.js && node --check app.js && node --check chatbot.js && node --check cv-download.js && node --check config.js && node -e \"JSON.parse(require('node:fs').readFileSync('cv-chat-context.json', 'utf8'))\"",
+    "cf:build": "npm test && node --check worker.js && node --check app.js && node --check chatbot.js && node --check cv-download.js && node --check config.js && node -e \"JSON.parse(require('node:fs').readFileSync('cv-chat-context.json', 'utf8'))\"",
     "cf:deploy": "npx wrangler d1 migrations apply cvlandingpage --remote && npx wrangler deploy",
     "test": "node --test"
   },
