@@ -60,7 +60,7 @@ try {
   check(/\bHttpOnly\b/i.test(setCookie), "Session cookie is HttpOnly");
   check(/\bSecure\b/i.test(setCookie), "Session cookie is Secure");
   check(/\bSameSite=Strict\b/i.test(setCookie), "Session cookie uses SameSite=Strict");
-  check(/\bPath=\\//i.test(setCookie), "Session cookie is scoped to root path");
+  check(/\bPath=\//i.test(setCookie), "Session cookie is scoped to root path");
 } catch (error) {
   console.error("FAIL  Session creation failed:", error.message);
   failures.push("Session creation failed");
