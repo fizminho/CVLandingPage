@@ -88,6 +88,12 @@ const RENDERERS = {
       const top = append(card, "div", "project-card-top");
       append(top, "div", "project-icon", icons[index % icons.length]);
       append(top, "div", "project-title", project.title);
+      if (project.statusId) {
+        const status = append(top, "span", "project-status project-status--checking", "CHECKING");
+        status.dataset.projectStatus = project.statusId;
+        status.setAttribute("role", "status");
+        status.setAttribute("aria-label", `${project.title} availability`);
+      }
       append(card, "div", "project-desc", project.description);
       addTags(card, project.tech);
       const link = safeExternalLink("View Project →", project.link, "project-link");
@@ -200,4 +206,37 @@ const RENDERERS = {
   document.querySelector(".nav-download").addEventListener("click", () => {
     if (typeof downloadCV === "function") downloadCV();
   });
+
+  refreshProjectStatuses();
+  window.addEventListener("focus", refreshProjectStatuses);
 })();
+
+async function refreshProjectStatuses() {
+  const badges = [...document.querySelectorAll("[data-project-status]")];
+  if (!badges.length) return;
+
+  try {
+    const response = await fetch("/api/project-status", {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!response.ok) throw new Error("Status check unavailable");
+    const data = await response.json();
+    const statuses = new Map((Array.isArray(data.projects) ? data.projects : [])
+      .map((project) => [project.id, project]));
+
+    badges.forEach((badge) => {
+      const project = statuses.get(badge.dataset.projectStatus);
+      const isLive = project?.status === "live";
+      badge.textContent = project ? (isLive ? "LIVE" : "OFFLINE") : "UNKNOWN";
+      badge.className = `project-status ${project ? (isLive ? "project-status--live" : "project-status--offline") : "project-status--unknown"}`;
+      badge.title = data.checkedAt ? `Checked ${new Date(data.checkedAt).toLocaleString()}` : "Availability check";
+    });
+  } catch {
+    badges.forEach((badge) => {
+      badge.textContent = "UNKNOWN";
+      badge.className = "project-status project-status--unknown";
+      badge.title = "Could not check availability";
+    });
+  }
+}
