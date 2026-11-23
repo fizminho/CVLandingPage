@@ -12,6 +12,7 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       const routes = {
         "/api/session": () => createSession(request, env),
+        "/api/project-status": () => projectStatus(request),
         "/api/chat": () => chat(request, env),
         "/api/log/download": () => logDownload(request, env),
       };
@@ -25,6 +26,31 @@ export default {
     ctx.waitUntil(cleanup(env));
   },
 };
+
+const PUBLIC_PROJECTS = [
+  { id: "kitanotes", url: "https://kitanotes.binalah.com/" },
+  { id: "bayarlah", url: "https://bayarlah.binalah.com/" },
+];
+
+async function projectStatus(request) {
+  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405, { Allow: "GET" });
+  const projects = await Promise.all(PUBLIC_PROJECTS.map(async (project) => {
+    try {
+      const response = await fetch(project.url, {
+        method: "GET",
+        headers: { Range: "bytes=0-0" },
+        redirect: "follow",
+        signal: AbortSignal.timeout(5000),
+      });
+      const status = response.status;
+      await response.body?.cancel();
+      return { id: project.id, status: status >= 200 && status < 500 ? "live" : "offline" };
+    } catch {
+      return { id: project.id, status: "offline" };
+    }
+  }));
+  return json({ projects, checkedAt: new Date().toISOString() });
+}
 
 async function createSession(request, env) {
   const invalid = validateMutation(request);
