@@ -176,6 +176,7 @@ async function logDownload() {
       body: JSON.stringify({}),
       credentials: "same-origin",
       cache: "no-store",
+      keepalive: true,
     });
 
     if (!sessionResponse.ok) {
