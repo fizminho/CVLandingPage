@@ -6,3 +6,6 @@ compatibility_date = "2026-11-23"
 directory = "."
 binding = "ASSETS"
 run_worker_first = ["/api/*"]
+
+[observability]
+enabled = true
