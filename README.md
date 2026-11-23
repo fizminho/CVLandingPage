@@ -23,7 +23,7 @@ A personal CV and portfolio landing page deployed to **Cloudflare Workers** with
 
 ## Cloudflare setup
 
-Connect this GitHub repository to **Workers Builds** in the Cloudflare dashboard and select the production branch `main`.
+Connect this GitHub repository to **Workers Builds** in the Cloudflare dashboard and select the production branch `main`. The Cloudflare Worker name must be `cv-landing-page` to match `wrangler.toml`.
 
 Use these build settings:
 
