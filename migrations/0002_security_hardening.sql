@@ -19,9 +19,3 @@ CREATE TABLE IF NOT EXISTS security_rate_limits (
 
 CREATE INDEX IF NOT EXISTS idx_security_rate_limits_expires
   ON security_rate_limits (expires_at);
-
-CREATE INDEX IF NOT EXISTS idx_chat_conversations_created_at
-  ON chat_conversations (created_at);
-
-CREATE INDEX IF NOT EXISTS idx_cv_downloads_downloaded_at_retention
-  ON cv_downloads (downloaded_at);
