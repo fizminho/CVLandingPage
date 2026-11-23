@@ -25,7 +25,7 @@ test("rejects wrong content type", () => {
 });
 
 test("rejects declared and streamed oversized bodies", async () => {
-  const declared = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Length": "100", "Content-Type": "application/json" }, body: "{}" });
+  const declared = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Length": "100", "Content-Type": "application/json" } });
   const streamed = new Request("https://cv.example/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: "x".repeat(100) }) });
   assert.equal((await __test.readJson(declared, 10)).error.status, 413);
   assert.equal((await __test.readJson(streamed, 10)).error.status, 413);
