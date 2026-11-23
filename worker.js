@@ -103,6 +103,11 @@ async function logDownload(request, env) {
   if (!env.DB || !env.RATE_LIMIT_SECRET) return json({ error: "Database is not configured" }, 503);
   const session = await sessionFromRequest(request, env);
   if (!session) return json({ error: "Session expired" }, 401);
+  const parsed = await readJson(request, 128);
+  if (parsed.error) return parsed.error;
+  if (!parsed.data || typeof parsed.data !== "object" || Array.isArray(parsed.data) || Object.keys(parsed.data).length !== 0) {
+    return json({ error: "Invalid request body" }, 400);
+  }
   const limited = await rateLimit(env, request, "download", 5, 3600);
   if (!limited.allowed) return limited.response;
   try {
