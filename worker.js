@@ -29,7 +29,7 @@ export default {
 async function createSession(request, env) {
   const invalid = validateMutation(request);
   if (invalid) return invalid;
-  if (!env.DB || !env.RATE_LIMIT_SECRET) return json({ error: "Service is not configured" }, 503);
+  if (!env.DB || !hasRateLimitSecret(env)) return json({ error: "Service is not configured" }, 503);
   const current = await sessionFromRequest(request, env);
   if (current) return json({ ok: true });
   const limit = await rateLimit(env, request, "session", 10, 3600);
@@ -50,7 +50,7 @@ async function createSession(request, env) {
 async function chat(request, env) {
   const invalid = validateMutation(request);
   if (invalid) return invalid;
-  if (!env.DB || !env.GEMINI_API_KEY || !env.RATE_LIMIT_SECRET) return json({ error: "Chat service is not configured" }, 503);
+  if (!env.DB || !env.GEMINI_API_KEY || !hasRateLimitSecret(env)) return json({ error: "Chat service is not configured" }, 503);
   const session = await sessionFromRequest(request, env);
   if (!session) return json({ error: "Session expired. Refresh the page and try again." }, 401);
   const parsed = await readJson(request, MAX_BODY);
@@ -167,7 +167,7 @@ async function sessionFromRequest(request, env) {
 }
 
 async function rateLimit(env, request, scope, max, seconds) {
-  if (!env.DB || !env.RATE_LIMIT_SECRET) return { allowed: false, response: json({ error: "Rate limiting is not configured" }, 503) };
+  if (!env.DB || !hasRateLimitSecret(env)) return { allowed: false, response: json({ error: "Rate limiting is not configured" }, 503) };
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const fingerprint = await hmac(env.RATE_LIMIT_SECRET, scope + ":" + ip);
   const timestamp = now();
@@ -260,6 +260,7 @@ function secure(response, requestUrl) {
 function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...extra } });
 }
+function hasRateLimitSecret(env) { return typeof env.RATE_LIMIT_SECRET === "string" && new TextEncoder().encode(env.RATE_LIMIT_SECRET).byteLength >= 32; }
 function now() { return Math.floor(Date.now() / 1000); }
 function clean(value, max) { return value ? value.replace(/[\u0000-\u001f\u007f]/g, "").slice(0, max) || null : null; }
 function randomToken() { const bytes = crypto.getRandomValues(new Uint8Array(32)); let binary = ""; for (const b of bytes) binary += String.fromCharCode(b); return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, ""); }
