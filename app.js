@@ -53,6 +53,18 @@ const RENDERERS = {
     return section;
   },
 
+  achievements() {
+    if (!CONFIG.achievements?.length) return null;
+    const section = sectionShell("achievements", "Selected Project Achievements");
+    CONFIG.achievements.forEach((item) => {
+      const card = append(section, "div", "exp-card");
+      append(card, "div", "exp-title", item.title);
+      append(card, "div", "exp-company", item.scale);
+      append(card, "p", "about-text", item.description);
+    });
+    return section;
+  },
+
   erp() {
     const section = sectionShell("erp", "ERP Experience");
     const list = append(section, "div", "erp-list");
