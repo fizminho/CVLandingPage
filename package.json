@@ -1,0 +1,15 @@
+{
+  "name": "cv-landing-page",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "cf:build": "node scripts/inject-env.mjs",
+    "cf:deploy": "npx wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.166.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
