@@ -147,6 +147,7 @@ async function logDownload(request, env) {
         referrerOrigin(request.headers.get("Referer"))).run();
     return json({ ok: true }, 201);
   } catch {
+    console.error("[download] D1 insert failed");
     return json({ error: "Unable to save download log" }, 503);
   }
 }
