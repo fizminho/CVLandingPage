@@ -53,7 +53,7 @@ async function downloadCV() {
   }
 
   function bullet(text) {
-    writeText(`• ${text}`, { indent: 1, gapAfter: 0.5 });
+    writeText(`- ${text}`, { indent: 1, gapAfter: 0.5 });
   }
 
   const c = CONFIG;
