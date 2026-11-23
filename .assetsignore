@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+.wrangler
+scripts
+README.md
+PLAN.md
+cv.md
+package.json
+wrangler.toml
+worker.js
+.assetsignore
