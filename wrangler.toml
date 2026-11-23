@@ -11,7 +11,7 @@ migrations_dir = "migrations"
 [assets]
 directory = "."
 binding = "ASSETS"
-run_worker_first = ["/api/*"]
+run_worker_first = ["/*"]
 
 [observability]
 enabled = true
