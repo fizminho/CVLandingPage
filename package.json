@@ -3,13 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "cf:build": "node --check worker.js && node --check chatbot.js && node --check cv-download.js",
-    "cf:deploy": "npx wrangler d1 migrations apply cvlandingpage --remote && npx wrangler deploy"
+    "cf:build": "node --check worker.js && node --check app.js && node --check chatbot.js && node --check cv-download.js && node --check config.js",
+    "cf:deploy": "npx wrangler d1 migrations apply cvlandingpage --remote && npx wrangler deploy",
+    "test": "node --test"
   },
   "devDependencies": {
     "wrangler": "^4.166.0"
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "type": "module"
 }
