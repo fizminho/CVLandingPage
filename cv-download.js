@@ -144,17 +144,17 @@ async function downloadCV() {
 }
 
 async function logDownload() {
-  await fetch(`${SUPABASE_URL}/rest/v1/cv_downloads`, {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({
-      user_agent: navigator.userAgent,
-      referrer: document.referrer || "direct",
-    }),
-  });
+  try {
+    await fetch("/api/log/download", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userAgent: navigator.userAgent,
+        referrer: document.referrer || "direct",
+      }),
+      keepalive: true,
+    });
+  } catch (error) {
+    console.warn("[cv-download] D1 logging failed:", error);
+  }
 }
