@@ -1,18 +1,9 @@
-const GEMINI_API_KEY = "__GEMINI_API_KEY__";
 const SUPABASE_URL = "__SUPABASE_URL__";
 const SUPABASE_ANON_KEY = "__SUPABASE_ANON_KEY__";
 
-const MODELS = [
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash",
-  "gemini-2.0-flash-lite",
-];
-
-const RETRIES_PER_MODEL = 3;
 const SESSION_ID = crypto.randomUUID();
 const MAX_QUESTIONS = 5;
-const SEND_COOLDOWN_MS = 5000; // 5s delay between messages
+const SEND_COOLDOWN_MS = 5000;
 
 let questionCount = 0;
 let lastSentAt = 0;
@@ -33,7 +24,7 @@ SUMMARY:
 ${c.about}
 
 WORK EXPERIENCE:
-${c.experience.map((e) => `${e.title} at ${e.company} (${e.period})\n${e.points.map((p) => `- ${p}`).join("\n")}\nSkills: ${e.skills.join(", ")}`).join("\n\n")}
+${c.experience.map((e) => `${e.title} at ${e.company} (${e.period})\\n${e.points.map((p) => `- ${p}`).join("\\n")}\\nSkills: ${e.skills.join(", ")}`).join("\\n\\n")}
 
 PREFERRED POSITIONS:
 ${c.preferredposition}
@@ -45,76 +36,41 @@ PREVIOUS/OTHER SKILLS:
 ${c.previousskills.map((s) => `${s.name} (since ${s.since})`).join(", ")}
 
 LANGUAGES:
-${c.languages.map((l) => `${l.name}: ${l.proficiency}`).join("\n")}
+${c.languages.map((l) => `${l.name}: ${l.proficiency}`).join("\\n")}
 
 EDUCATION:
-${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})\nActivities: ${e.activities.join("; ")}`).join("\n")}
+${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})\\nActivities: ${e.activities.join("; ")}`).join("\\n")}
 
 PROJECTS:
-${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\n")}
+${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\\n")}
 
 COMPETENCIES:
 ${c.competencies.map((comp) => comp.name).join(", ")}
 
 ERP EXPERIENCE:
-${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\n")}
+${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\\n")}
 
 --- END CV DATA ---`;
 }
 
-async function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-async function callGemini(model, messages) {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: buildSystemPrompt() }] },
-        contents: messages,
-      }),
-    }
-  );
-  if (!res.ok) {
-    const errBody = await res.text().catch(() => "");
-    throw new Error(`HTTP ${res.status}: ${errBody}`);
-  }
-  const data = await res.json();
-  return data.candidates[0].content.parts[0].text;
-}
-
-async function sendToGemini(messages) {
-  for (const model of MODELS) {
-    for (let attempt = 0; attempt < RETRIES_PER_MODEL; attempt++) {
-      try {
-        return await callGemini(model, messages);
-      } catch (err) {
-        console.error(`[chatbot] ${model} attempt ${attempt + 1} failed:`, err);
-        if (attempt < RETRIES_PER_MODEL - 1) await sleep(1000 * 2 ** attempt);
-      }
-    }
-  }
-  throw new Error("All models exhausted");
-}
-
 async function saveToSupabase(role, message) {
-  await fetch(`${SUPABASE_URL}/rest/v1/chat_conversations`, {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({ session_id: SESSION_ID, role, message }),
-  });
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/chat_conversations`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({ session_id: SESSION_ID, role, message }),
+    });
+  } catch (error) {
+    console.warn("[chatbot] Supabase logging failed:", error);
+  }
 }
 
-// --- UI ---
-const chatHistory = []; // { role: "user"|"model", parts: [{text}] }
+const chatHistory = [];
 
 function appendMessage(role, text) {
   const box = document.getElementById("chat-messages");
@@ -125,21 +81,37 @@ function appendMessage(role, text) {
   box.scrollTop = box.scrollHeight;
 }
 
+async function sendToGemini(messages) {
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: buildSystemPrompt(),
+      messages,
+    }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || `Chat request failed: HTTP ${response.status}`);
+  }
+  if (typeof data.answer !== "string" || !data.answer.trim()) {
+    throw new Error("Chat service returned an empty response");
+  }
+  return data.answer;
+}
+
 async function handleSend() {
   const input = document.getElementById("chat-input");
   const btn = document.getElementById("chat-send");
   const text = input.value.trim();
 
-  // Block all entry points — disabled input, waiting for reply, or empty text
   if (input.disabled || isWaiting || !text) return;
-
-  // Hard block: limit reached
   if (questionCount >= MAX_QUESTIONS) {
     lockInput(input, btn);
     return;
   }
 
-  // Cooldown check
   const now = Date.now();
   const elapsed = now - lastSentAt;
   if (elapsed < SEND_COOLDOWN_MS) {
@@ -148,7 +120,6 @@ async function handleSend() {
     return;
   }
 
-  // Lock while waiting for reply
   isWaiting = true;
   lastSentAt = now;
   questionCount++;
@@ -157,7 +128,7 @@ async function handleSend() {
   input.value = "";
 
   appendMessage("user", text);
-  saveToSupabase("user", text);
+  void saveToSupabase("user", text);
   chatHistory.push({ role: "user", parts: [{ text }] });
 
   appendMessage("model", "…");
@@ -167,8 +138,9 @@ async function handleSend() {
     const reply = await sendToGemini(chatHistory);
     chatHistory.push({ role: "model", parts: [{ text: reply }] });
     thinking.textContent = reply;
-    saveToSupabase("assistant", reply);
-  } catch {
+    void saveToSupabase("assistant", reply);
+  } catch (error) {
+    console.error("[chatbot] Request failed:", error);
     thinking.textContent = "Sorry, I'm unavailable right now. Please try again later.";
   } finally {
     isWaiting = false;
@@ -186,7 +158,6 @@ function lockInput(input, btn) {
   input.disabled = true;
   btn.disabled = true;
   input.placeholder = "Question limit reached. Refresh to start over.";
-  // Only show the message once
   const msgs = document.querySelectorAll(".chat-msg--model");
   const last = msgs[msgs.length - 1];
   if (last && last.textContent.includes("limit")) return;
@@ -194,10 +165,17 @@ function lockInput(input, btn) {
 }
 
 function initChat() {
-  document.getElementById("chat-send").addEventListener("pointerup", (e) => { e.preventDefault(); handleSend(); });
-  document.getElementById("chat-input").addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  document.getElementById("chat-send").addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    handleSend();
   });
+  document.getElementById("chat-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  });
+
   const widget = document.getElementById("chat-widget");
   const label = document.getElementById("chat-label");
 
