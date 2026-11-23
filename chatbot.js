@@ -1,6 +1,3 @@
-const SUPABASE_URL = "__SUPABASE_URL__";
-const SUPABASE_ANON_KEY = "__SUPABASE_ANON_KEY__";
-
 const SESSION_ID = crypto.randomUUID();
 const MAX_QUESTIONS = 5;
 const SEND_COOLDOWN_MS = 5000;
@@ -24,7 +21,7 @@ SUMMARY:
 ${c.about}
 
 WORK EXPERIENCE:
-${c.experience.map((e) => `${e.title} at ${e.company} (${e.period})\n${e.points.map((p) => `- ${p}`).join("\n")}\nSkills: ${e.skills.join(", ")}`).join("\n\n")}
+${c.experience.map((e) => `${e.title} at ${e.company} (${e.period})\\n${e.points.map((p) => `- ${p}`).join("\\n")}\\nSkills: ${e.skills.join(", ")}`).join("\\n\\n")}
 
 PREFERRED POSITIONS:
 ${c.preferredposition}
@@ -36,37 +33,33 @@ PREVIOUS/OTHER SKILLS:
 ${c.previousskills.map((s) => `${s.name} (since ${s.since})`).join(", ")}
 
 LANGUAGES:
-${c.languages.map((l) => `${l.name}: ${l.proficiency}`).join("\n")}
+${c.languages.map((l) => `${l.name}: ${l.proficiency}`).join("\\n")}
 
 EDUCATION:
-${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})\nActivities: ${e.activities.join("; ")}`).join("\n")}
+${c.education.map((e) => `${e.degree}, ${e.institution}, ${e.grade} (${e.period})\\nActivities: ${e.activities.join("; ")}`).join("\\n")}
 
 PROJECTS:
-${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\n")}
+${c.projects.map((p) => `${p.title}: ${p.description} [Tech: ${p.tech.join(", ")}]`).join("\\n")}
 
 COMPETENCIES:
 ${c.competencies.map((comp) => comp.name).join(", ")}
 
 ERP EXPERIENCE:
-${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\n")}
+${c.erpExperience.map((e) => `${e.system} — ${e.duration}`).join("\\n")}
 
 --- END CV DATA ---`;
 }
 
-async function saveToSupabase(role, message) {
+async function saveToDatabase(role, message) {
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/chat_conversations`, {
+    await fetch("/api/log/chat", {
       method: "POST",
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify({ session_id: SESSION_ID, role, message }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: SESSION_ID, role, message }),
+      keepalive: true,
     });
   } catch (error) {
-    console.warn("[chatbot] Supabase logging failed:", error);
+    console.warn("[chatbot] D1 logging failed:", error);
   }
 }
 
@@ -128,7 +121,7 @@ async function handleSend() {
   input.value = "";
 
   appendMessage("user", text);
-  void saveToSupabase("user", text);
+  void saveToDatabase("user", text);
   chatHistory.push({ role: "user", parts: [{ text }] });
 
   appendMessage("model", "…");
@@ -138,7 +131,7 @@ async function handleSend() {
     const reply = await sendToGemini(chatHistory);
     chatHistory.push({ role: "model", parts: [{ text: reply }] });
     thinking.textContent = reply;
-    void saveToSupabase("assistant", reply);
+    void saveToDatabase("assistant", reply);
   } catch (error) {
     console.error("[chatbot] Request failed:", error);
     thinking.textContent = "Sorry, I'm unavailable right now. Please try again later.";
