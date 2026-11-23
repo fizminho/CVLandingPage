@@ -1,0 +1,191 @@
+{
+  "name": "Muhammad Hafiz Bin Zulkiflee Amin",
+  "tagline": "Senior Software Developer",
+  "location": "Rawang, Selangor",
+  "summary": "Software Engineer specializing in ERP customization, .NET development and system integration. Experience with IFCA Property ERP, Microsoft Dynamics 365, web services, API integration, database optimization and cloud-based systems.",
+  "linkedin": "https://www.linkedin.com/in/muhammad-hafiz-4b6939146",
+  "experience": [
+    {
+      "title": "Senior Software Developer",
+      "company": "Dialog Group Berhad",
+      "period": "Dec 2023 - Present",
+      "points": [
+        "Maintained and enhanced a large-scale Welfare Management System (WMS), delivering features and supporting system availability.",
+        "Worked on message-driven transaction architecture using message brokers to improve scalability and reliability of e-wallet style payment processing.",
+        "Developed high-performance batch processing for large scheduled workloads.",
+        "Supported delivery of SARA 2025 for approximately 5 million recipients and SARA Untuk Semua 2026 for approximately 22 million recipients.",
+        "Worked with DevOps teams on AWS infrastructure and optimized application and database performance using C#, PostgreSQL and AWS."
+      ],
+      "skills": [
+        "C#",
+        "Redis",
+        "Kafka / MSK",
+        "PostgreSQL",
+        "AWS",
+        "Microservices"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "IFCA MSC Bhd",
+      "period": "Dec 2019 - Dec 2023",
+      "points": [
+        "Customized and enhanced IFCA ERP modules including Procurement Management, Rental and Residential, Cash Management and General Ledger.",
+        "Developed SSRS reports, import/export functions and business process automation.",
+        "Developed API integration between IFCA and HIMS (KPKT) for E-SPA.",
+        "Developed integrations between IFCA and Microkredit, and between IFCA General Ledger and PKNS GRP.",
+        "Created EFT files for UOB, AmBank and Maybank."
+      ],
+      "skills": [
+        "MSSQL",
+        "HTML",
+        "JavaScript",
+        "C#",
+        "ASP.NET",
+        "Web API"
+      ]
+    },
+    {
+      "title": "Technical Consultant",
+      "company": "9 Dots Consulting",
+      "period": "Jan 2019 - Dec 2019",
+      "points": [
+        "Customized and maintained Microsoft Dynamics 365 applications.",
+        "Supported development of an Ionic application integrated with Dynamics 365.",
+        "Provided Dynamics 365 training and consulting to customers."
+      ],
+      "skills": [
+        "X++",
+        "MSSQL",
+        "C#",
+        "Ionic",
+        "SSRS"
+      ]
+    },
+    {
+      "title": "IT Intern",
+      "company": "TH Plantations Bhd",
+      "period": "Jul 2018 - Jan 2019",
+      "points": [
+        "Worked with Mill and Estate systems and supported a water-level sensor R&D project.",
+        "Provided user training for Palm Workers Management and built an internal hotel booking system using VB.NET and ASP.NET."
+      ],
+      "skills": [
+        "VB.NET",
+        "ASP.NET"
+      ]
+    }
+  ],
+  "skills": [
+    "Microservices",
+    "Redis",
+    "PostgreSQL",
+    "Kafka",
+    "AWS (EC2, S3, EKS, RDS, MSK)",
+    "C#",
+    "HTML",
+    "MS SQL",
+    "JavaScript",
+    "ASP.NET",
+    "SSRS",
+    "X++",
+    "Ionic"
+  ],
+  "education": [
+    {
+      "degree": "Bachelor Degree Information Technology",
+      "institution": "Universiti Tun Hussein Onn Malaysia",
+      "grade": "Upper Second Class Honours, CGPA 3.40",
+      "period": "Jun 2015 - Dec 2019"
+    }
+  ],
+  "projects": [
+    {
+      "title": "BayarLah",
+      "description": "A personal finance web app to help users manage and track split payments and expenses.",
+      "tech": [
+        "Next.js",
+        "Vercel"
+      ]
+    },
+    {
+      "title": "SewaLah",
+      "description": "A rental management system for small property owners managing room and property rentals.",
+      "tech": [
+        "Next.js",
+        "C#",
+        "AWS"
+      ]
+    },
+    {
+      "title": "IFCA ERP Customisations",
+      "description": "Customisations and automation for IFCA Property ERP clients across Procurement, Cash Management and General Ledger.",
+      "tech": [
+        "C#",
+        "MSSQL",
+        "ASP.NET",
+        "SSRS",
+        "JavaScript"
+      ]
+    },
+    {
+      "title": "D365 Ionic Integration",
+      "description": "Mobile application integrating Microsoft Dynamics 365 with an Ionic application for field operations.",
+      "tech": [
+        "X++",
+        "Ionic",
+        "C#",
+        "MSSQL"
+      ]
+    },
+    {
+      "title": "Internal Hotel Booking System",
+      "description": "Booking management system built for TH Plantations internal hotel operations.",
+      "tech": [
+        "VB.NET",
+        "ASP.NET"
+      ]
+    }
+  ],
+  "preferredPositions": [
+    "BE Developer",
+    "Lead Developer",
+    "Technical Consultant",
+    "Solution Architect",
+    "Business Analyst"
+  ],
+  "languages": [
+    {
+      "name": "English",
+      "proficiency": "Professional Working Proficiency"
+    },
+    {
+      "name": "Malay",
+      "proficiency": "Native or Bilingual Proficiency"
+    }
+  ],
+  "erpExperience": [
+    {
+      "system": "IFCA Property ERP",
+      "duration": "4 Years"
+    },
+    {
+      "system": "Microsoft Dynamics 365",
+      "duration": "1 Year"
+    }
+  ],
+  "competencies": [
+    "System Design & Architecture",
+    "API Integration & Web Services",
+    "ERP Customisation",
+    "Technical Consulting",
+    "Business Requirements Analysis",
+    "Stakeholder Communication",
+    "Database Design & Optimisation",
+    "Batch Processing & Automation",
+    "Cloud Infrastructure (AWS)",
+    "Message-Driven Architecture",
+    "Technical Documentation",
+    "Team Mentoring & Training"
+  ]
+}

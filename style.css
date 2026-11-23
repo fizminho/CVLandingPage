@@ -580,3 +580,5 @@ footer {
   .projects-grid { grid-template-columns: 1fr; }
   main { padding: 0 1rem 5rem; }
 }
+
+.chat-privacy { padding: 0.35rem 0.75rem 0.55rem; background: var(--white); color: var(--muted); font-size: 0.68rem; line-height: 1.4; }
