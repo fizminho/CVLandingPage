@@ -295,6 +295,42 @@ section { margin-top: 3rem; }
   flex-shrink: 0;
 }
 .project-title { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.project-status {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  border: 1px solid transparent;
+}
+.project-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.project-status--checking, .project-status--unknown {
+  color: #6b7280;
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+}
+.project-status--live {
+  color: #047857;
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.project-status--offline {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
 .project-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.6; flex: 1; }
 .project-link {
   color: var(--accent);
