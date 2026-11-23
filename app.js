@@ -27,7 +27,7 @@ function safeExternalLink(label, value, className) {
 function sectionShell(id, title) {
   const section = makeElement("section");
   section.id = id;
-  append(section, "div", "section-title", title);
+  append(section, "h2", "section-title", title);
   return section;
 }
 
@@ -57,7 +57,7 @@ const RENDERERS = {
     if (!CONFIG.achievements?.length) return null;
     const section = sectionShell("achievements", "Selected Project Achievements");
     CONFIG.achievements.forEach((item) => {
-      const card = append(section, "div", "exp-card");
+      const card = append(section, "article", "exp-card");
       append(card, "div", "exp-title", item.title);
       append(card, "div", "exp-company", item.scale);
       append(card, "p", "about-text", item.description);
@@ -96,7 +96,7 @@ const RENDERERS = {
     const grid = append(section, "div", "projects-grid");
     const icons = ["🛠️", "📱", "🏨", "⚙️", "📊", "🔗"];
     CONFIG.projects.forEach((project, index) => {
-      const card = append(grid, "div", "project-card");
+      const card = append(grid, "article", "project-card");
       const top = append(card, "div", "project-card-top");
       append(top, "div", "project-icon", icons[index % icons.length]);
       append(top, "div", "project-title", project.title);
@@ -140,7 +140,7 @@ const RENDERERS = {
   education() {
     const section = sectionShell("education", "Education");
     CONFIG.education.forEach((item) => {
-      const card = append(section, "div", "edu-card");
+      const card = append(section, "article", "edu-card");
       append(card, "div", "edu-degree", item.degree);
       append(card, "div", "edu-institution", item.institution);
       append(card, "div", "edu-meta", `${item.grade} | ${item.period}`);
