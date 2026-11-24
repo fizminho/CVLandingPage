@@ -215,8 +215,18 @@ const RENDERERS = {
     main.appendChild(section);
   });
 
-  document.querySelector(".nav-download").addEventListener("click", () => {
-    if (typeof downloadCV === "function") downloadCV();
+  const downloadButton = document.querySelector(".nav-download");
+  downloadButton.addEventListener("click", async () => {
+    if (typeof downloadCV !== "function" || downloadButton.disabled) return;
+    downloadButton.disabled = true;
+    try {
+      await downloadCV();
+    } catch (error) {
+      // Keep unexpected PDF-generation errors visible without silently swallowing them.
+      console.error("[cv-download] PDF generation failed:", error);
+    } finally {
+      downloadButton.disabled = false;
+    }
   });
 
   refreshProjectStatuses();
