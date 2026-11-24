@@ -164,8 +164,10 @@ async function downloadCV() {
     });
   }
 
-  doc.save("Muhammad-Hafiz-CV.pdf");
+  // Record the download before triggering the browser's file-save flow.
+  // Audit failures are intentionally non-blocking so the CV remains downloadable.
   await logDownload();
+  doc.save("Muhammad-Hafiz-CV.pdf");
 }
 
 async function logDownload() {
